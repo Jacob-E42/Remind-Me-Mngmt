@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{%block title %}
+    Login
+{%endblock%}
+
+{%block content%}
+    <form action="{{url_for('login')}}", method="post">
+        {{ form.hidden_tag() }} <!--add type=hidden form fields -->
+
+        {% for field in form
+                if field.widget.input_type != 'hidden' %}
+
+            <p>
+            {{ field.label }}
+            {{ field }}
+
+            {% for error in field.errors %}
+                {{ error }}
+            {% endfor %}
+            </p>
+
+        {% endfor %}
+
+        <button class="btn btn-primary" type="submit">Submit</button>
+        <button class="btn btn-info" type="submit" formaction="{{url_for('show_homepage')}}" formmethod="get">Back</button>
+    </form>
+{%endblock%}
