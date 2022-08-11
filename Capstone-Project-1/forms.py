@@ -30,7 +30,7 @@ class SignupForm(FlaskForm):
   first_name = StringField("First Name")
   last_name = StringField("Last Name")
   username = StringField("Username")
-  pasword = PasswordField("Password")
+  password = PasswordField("Password")
   email = EmailField("Email")
   phone = StringField("Phone Number")
     

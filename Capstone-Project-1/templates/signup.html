@@ -1,8 +1,6 @@
-{% extends "base.html" %}
+{% extends 'index.html' %}
 
-{%block title %}
-    Sign Up
-{%endblock%}
+
 
 {%block content%}
     <form action="/signup", method="post">
@@ -23,6 +21,6 @@
         {% endfor %}
 
         <button class="btn btn-primary" type="submit">Sign Up</button>
-        <button class="btn btn-info" type="submit" formaction="/" formmethod="get">Back</button>
+        <a class="btn btn-info" href="{{url_for('show_homepage')}}">Back</a>
     </form>
 {%endblock%}

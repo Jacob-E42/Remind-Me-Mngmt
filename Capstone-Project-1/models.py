@@ -2,8 +2,9 @@
 
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql import func
+from flask_bcrypt import Bcrypt
 
-
+bcrypt = Bcrypt()
 
 db = SQLAlchemy()
 
@@ -27,6 +28,9 @@ class User(db.Model):
     phone = db.Column(db.Text, nullable=False, unique=True)
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     is_admin = db.Column(db.Boolean, nullable=False, default=False)
+    is_authenticated = False
+    is_active = True
+    is_anonymous = True
 
 
     tasks = db.relationship("Task", backref="users", secondary="assignments")
@@ -34,7 +38,26 @@ class User(db.Model):
 
     def __repr__(self):
         
-        return f" {self.id} "
+        return f" {self.id} {self.first_name} {self.last_name} "
+
+    #method required by flask-login to get the user's id as a string
+    def get_id(self):
+        return str(id)
+
+    @classmethod
+    def register(cls, pwd, data):
+
+        hashed = bcrypt.generate_password_hash(pwd, rounds=14)
+
+        # turn bytestring into normal (unicode utf8) string
+        hashed_utf8 = hashed.decode("utf8")
+        new_user = cls(password=hashed_utf8, **data)
+
+        if new_user:
+            return new_user
+        else:
+            return False
+
     
     
     
