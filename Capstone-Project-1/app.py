@@ -4,9 +4,14 @@
 from flask import Flask, request, redirect, render_template, session, flash
 from models import db, connect_db, User, Assignment, Task
 from forms import LoginForm, SignupForm
-from secret import API_SECRET_KEY, ACCOUNT_SID, TEST_AUTH_TOKEN, AUTH_TOKEN
+from secret import ACCOUNT_SID, TEST_AUTH_TOKEN, AUTH_TOKEN, SERVICE_SID
 from flask_debugtoolbar import DebugToolbarExtension
+import os
+from twilio.rest import Client
 import requests
+
+Yaakov = "+15164506401"
+Yehoshua = "+12063198779"
 
 
 
@@ -56,29 +61,48 @@ def signup():
 @app.route("/remind", methods=["POST", "GET"])
 def send_sms():
  
-    return "hooray"
+    # Your Account SID from twilio.com/console
+    account_sid = ACCOUNT_SID
+    # Your Auth Token from twilio.com/console
+    auth_token  = AUTH_TOKEN
+
+    client = Client(account_sid, auth_token)
+    notification = client.notify.services(SERVICE_SID) \
+    .notifications.create(
+        # We recommend using a GUID or other anonymized identifier for Identity
+        identity='00000002',
+        body='Knok-Knok! You have gotten your first test')
+    print(notification.sid)
+    return f"{notification.sid}"
 
 
 @app.route("/bind")
 def setup_binding():
-    import os
-    from twilio.rest import Client
-
-    # To set up environmental variables, see http://twil.io/secure
-    
     
 
-    client = Client(ACCOUNT_SID, AUTH_TOKEN)
-    binding = client.notify.services('ISXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX') \
-        .bindings.create(
-            # We recommend using a GUID or other anonymized identifier for Identity
-            identity='00000001',
-            binding_type='sms',
-            address='+15164506401')
+    # Your Account SID from twilio.com/console
+    account_sid = ACCOUNT_SID
+    # Your Auth Token from twilio.com/console
+    auth_token  = AUTH_TOKEN
+
+    client = Client(account_sid, auth_token)
+    
+    binding = client.notify.v1 \
+                       .services(SERVICE_SID) \
+                       .bindings \
+                       .create(
+                            identity='00000002',
+                            binding_type='sms',
+                            address='+12063198779'
+                        )
+
     print(binding.sid)
     return "You did it"
 
-@app.route("/status", methods=["GET", "POST", "OPTIONS"])
-def receive_status():
-    status = request.args
-    return jsonify(status)
+@app.route("/status", methods=['POST'])
+def incoming_sms():
+    message_sid = request.values.get('MessageSid', None)
+    message_status = request.values.get('MessageStatus', None)
+    logging.info('SID: {}, Status: {}'.format(message_sid, message_status))
+
+    return ('', 204)
