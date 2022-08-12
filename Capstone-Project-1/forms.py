@@ -1,55 +1,23 @@
 from flask_wtf import FlaskForm
-# from wtforms_alchemy import model_form_factory
 from wtforms import StringField, FloatField, PasswordField, EmailField
 from models import User, Task, Assignment, db
+from wtforms.validators import DataRequired, Email, Length, EqualTo, NumberRange, Optional, URL, AnyOf, NoneOf
 
-# BaseModelForm = model_form_factory(FlaskForm)
 
-# class ModelForm(BaseModelForm):
-#     @classmethod
-#     def get_session(self):
-#         return db.session
-
-# class UserForm(ModelForm):
-#     """Form for new user"""
-#     class Meta:
-#       model = User
-
-# class TaskForm(ModelForm):
-#     """Form for a new task"""
-#     class Meta:
-#       model = Task
 
 class LoginForm(FlaskForm):
 
-  username = StringField("Username")
-  password = PasswordField("Password")
+  username = StringField("Username", validators=[DataRequired(message="Username is required"), Length(min=3, max=100, message="Username must be at least 3 characters long")])
+  password = PasswordField("Password", validators=[DataRequired(message="Password is required"), Length(min=6, max=50, message="Password length must be between 6 and 50 characters")])
 
 class SignupForm(FlaskForm):
 
-  first_name = StringField("First Name")
-  last_name = StringField("Last Name")
-  username = StringField("Username")
-  password = PasswordField("Password")
-  email = EmailField("Email")
-  phone = StringField("Phone Number")
+  first_name = StringField("First Name", validators=[DataRequired(message="First name is required")])
+  last_name = StringField("Last Name", validators=[DataRequired(message="Last name is required")])
+  username = StringField("Username", validators=[DataRequired(message="Username is required"), Length(min=3, max=100, message="Username must be at least 3 characters long")])
+  password = PasswordField("Password", validators=[DataRequired(message="Password is required"), Length(min=6, max=50, message="Password length must be between 6 and 50 characters")])
+  email = EmailField("Email", validators=[DataRequired(message="Email is required"), Email()])
+  phone = StringField("Phone Number", validators=[DataRequired(message="Phone number is required"), Length(min=10, max=10, message="Phone number should be entered as plain digits with no other characters")])
     
 
 
-# {{ form.hidden_tag() }} <!--add type=hidden form fields -->
-
-#   {% for field in form
-#          if field.widget.input_type != 'hidden' %}
-
-#     <p>
-#       {{ field.label }}
-#       {{ field }}
-
-#       {% for error in field.errors %}
-#         {{ error }}
-#       {% endfor %}
-#     </p>
-
-#   {% endfor %}
-
-#   <button type="submit">Submit</button>
