@@ -1,0 +1,2 @@
+1. Add a route to handle changing a user's password
+2. Add functionality that auto logs out a user when their password is changed.
