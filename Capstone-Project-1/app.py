@@ -7,6 +7,7 @@ from forms import LoginForm, SignupForm
 from flask_login import LoginManager, current_user, login_required, login_user, logout_user
 from secret import ACCOUNT_SID, TEST_AUTH_TOKEN, AUTH_TOKEN, SERVICE_SID, SECRET_KEY
 from flask_debugtoolbar import DebugToolbarExtension
+from datetime import timedelta
 import os
 from twilio.rest import Client
 import requests
@@ -30,12 +31,26 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login"
 login_manager.login_message_category = "danger"
+login_manager.refresh_view = "login"
+login_manager.needs_refresh_message = (
+    u"To protect your account, please re-login to access this page."
+)
+login_manager.needs_refresh_message_category = "danger"
+
 
 USER = current_user
 BASE_URL = "https://api.txtlocal.com/send/"
 
 
 # ------------------------------------------------------------------------------------------
+def admin_required(func):
+    def validate_is_admin():
+        if not current_user.is_admin:
+            flash("You must be an admin to access this page", "danger")
+            return login_manager.unauthorized()
+        
+        return func()
+    return validate_is_admin
 
 @app.route('/')
 def show_homepage():
@@ -48,18 +63,23 @@ def login():
     form = LoginForm()
 
     if form.validate_on_submit():
-        login_user(USER)
-        flash('Logged in successfully.')
-        next = request.args.get('next')
+        (user, msg) = User.authenticate(form.username.data, form.password.data)
+        if user:
+            delta = timedelta(days=30)
+            login_user(user, remember=True, duration=delta)
+            flash(msg)
+            next = request.args.get('next')
 
-        # is_safe_url should check if the url is safe for redirects.
-        # See http://flask.pocoo.org/snippets/62/ for an example.
-        if not is_safe_url(next):
-            return abort(400)
+            # is_safe_url should check if the url is safe for redirects.
+            # See http://flask.pocoo.org/snippets/62/ for an example.
+            if not is_safe_url(next):
+                return abort(400)
+            return redirect(next or url_for('show_homepage'))
+        else:
+            flash(msg)
 
-        return redirect(next or url_for('show_homepage'))
-    else:
-        return render_template("login.html", form=form)
+    
+    return render_template("login.html", form=form)
 
 @app.route("/signup", methods=['GET', 'POST'])
 def signup():
@@ -70,6 +90,8 @@ def signup():
         new_user = User.register(form.password.data, data)
         db.session.add(new_user)
         db.session.commit()
+        login_user(new_user, remember=True, duration=timedelta(days=30))
+        flash('Signed up successfully.')
         url = url_for('show_homepage')
         return redirect(url)
     else:
@@ -80,6 +102,14 @@ def signup():
 def logout():
     logout_user()
     return redirect(f"{url_for('show_homepage')}")
+
+@app.route("/users")
+@login_required
+@admin_required
+def show_all_users():
+    
+    display = "You made it!"
+    return render_template("test.html", display=display)
 
 
 @app.route("/remind", methods=["POST", "GET"])
@@ -130,12 +160,15 @@ def incoming_sms():
     message_sid = request.values.get('MessageSid', None)
     message_status = request.values.get('MessageStatus', None)
     logging.info('SID: {}, Status: {}'.format(message_sid, message_status))
-
     return ('', 204)
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.get(user_id)
+    print("*************************", user_id)
+    user = User.query.get(user_id)
+    if user: 
+        return user
+    return None
 
 
 
@@ -144,3 +177,5 @@ def is_safe_url(target):
     test_url = urlparse(urljoin(request.host_url, target))
     return test_url.scheme in ('http', 'https') and \
            ref_url.netloc == test_url.netloc
+
+

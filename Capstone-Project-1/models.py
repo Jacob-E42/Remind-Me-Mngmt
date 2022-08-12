@@ -3,6 +3,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql import func
 from flask_bcrypt import Bcrypt
+from flask_login import UserMixin
 
 bcrypt = Bcrypt()
 
@@ -14,7 +15,7 @@ def connect_db(app):
     db.app = app
     db.init_app(app)
 
-class User(db.Model):
+class User(db.Model, UserMixin):
 
      
     __tablename__ = "users"
@@ -28,9 +29,8 @@ class User(db.Model):
     phone = db.Column(db.Text, nullable=False, unique=True)
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     is_admin = db.Column(db.Boolean, nullable=False, default=False)
-    is_authenticated = False
-    is_active = True
-    is_anonymous = True
+
+    
 
 
     tasks = db.relationship("Task", backref="users", secondary="assignments")
@@ -40,9 +40,21 @@ class User(db.Model):
         
         return f" {self.id} {self.first_name} {self.last_name} "
 
-    #method required by flask-login to get the user's id as a string
-    def get_id(self):
-        return str(id)
+    # @property
+    # def is_authenticated(self):
+    #     return False
+
+    # @property
+    # def is_active(self):
+    #     return False
+
+    # @property
+    # def is_anonymous(self):
+    #     return True
+
+    # #method required by flask-login to get the user's id as a string
+    # def get_id(self):
+    #     return str(self.id)
 
     @classmethod
     def register(cls, pwd, data):
@@ -57,7 +69,22 @@ class User(db.Model):
             return new_user
         else:
             return False
+    @classmethod
+    def authenticate(self, username, pwd):
+        """Validate that user exists & password is correct.
 
+        Return user if valid; else return False.
+        """
+
+        u = User.query.filter_by(username=username).first()
+        if not u:
+            return (False, "That is not a valid username")
+
+        if bcrypt.check_password_hash(u.password, pwd):
+            # return user instance
+            return (u, "Logged in successfully.")
+        else:
+            return (False, "The password provided is incorrect")
     
     
     
