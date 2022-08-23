@@ -40,21 +40,6 @@ class User(db.Model, UserMixin):
         
         return f" {self.id} {self.first_name} {self.last_name} "
 
-    # @property
-    # def is_authenticated(self):
-    #     return False
-
-    # @property
-    # def is_active(self):
-    #     return False
-
-    # @property
-    # def is_anonymous(self):
-    #     return True
-
-    # #method required by flask-login to get the user's id as a string
-    # def get_id(self):
-    #     return str(self.id)
 
     @classmethod
     def register(cls, pwd, data):
@@ -70,13 +55,13 @@ class User(db.Model, UserMixin):
         else:
             return False
     @classmethod
-    def authenticate(self, username, pwd):
+    def authenticate(cls, username, pwd):
         """Validate that user exists & password is correct.
 
         Return user if valid; else return False.
         """
 
-        u = User.query.filter_by(username=username).first()
+        u = cls.query.filter_by(username=username).first()
         if not u:
             return (False, "That is not a valid username")
 

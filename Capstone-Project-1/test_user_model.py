@@ -66,13 +66,50 @@ class UserModelTestCase(TestCase):
         res = super().tearDown()
         db.session.rollback()
         return res
-
-       # def test_get_homepage(self):
         
-    #     resp = self.c.get("/")
-    #     html = resp.get_data(as_text=True)
-    #     self.assertEqual(resp.status_code, 200)
-    #     self.assertIn('Home', html)
+    def test_user_model(self):
+        u = User(first_name="Emily", last_name="Test", username="myselfish22", password="testPwd11", email="emilytest@email.com2", phone="5162347647")
+        self.assertFalse(u.is_admin)
+        self.assertTrue(u.is_authenticated)
+        self.assertFalse(u.is_anonymous)
+
+ 
+
+    def test_valid_registration(self):
+        data = {"first_name":'ted', "last_name":"Teddy", "username":"Tedster", "email":"ted@email.com", "phone":"1234446789"}
+        new_user = User.register("bananas", data)
+        self.assertTrue(new_user)
+        self.assertEqual(new_user.first_name, "ted")
+        self.assertEqual(new_user.username, "Tedster")
+        self.assertEqual(new_user.email, "ted@email.com")
+        self.assertTrue(new_user.password.startswith("$2b$"))
+
+    def test_invalid_registration(self):
+        data = {"last_name":"Teddy", "username":"Tedster", "email":"ted@email.com", "phone":"1234446789"}
+        user1 = User.register("bananas", data)
+        db.session.add(user1)
+
+        with self.assertRaises(exc.IntegrityError) as context:
+            db.session.commit()
+
+    def test_valid_authentication(self):
+        (u,msg) = User.authenticate(self.u.username, "password")
+        self.assertIsNotNone(u)
+        self.assertTrue(u)
+        self.assertEqual(u.id, self.u.id)
+
+        u = User.query.filter_by(username=self.u.username).first()
+        self.assertIsNotNone(u)
+        self.assertEqual(u.id, 2)
+        self.assertTrue(u.password.startswith("$2b$"))
     
+    def test_invalid_username(self):
+        (res, msg) = User.authenticate("badusername", "password")
+        self.assertFalse(res)
 
+    def test_wrong_password(self):
+        (res, msg) = User.authenticate(self.u.username, "badpassword")
+        self.assertFalse(res)
 
+        
+   

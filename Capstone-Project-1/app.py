@@ -54,7 +54,7 @@ def admin_required(func):
 
 @app.route('/')
 def show_homepage():
-
+    
     return render_template("home.html")
 
 @app.route("/login", methods=["GET", "POST"])
@@ -88,9 +88,12 @@ def signup():
     if form.validate_on_submit():
         data = {k:v for k,v in form.data.items() if k != "password" and k != "csrf_token"}
         new_user = User.register(form.password.data, data)
+        print("************************", new_user)
         db.session.add(new_user)
         db.session.commit()
-        login_user(new_user, remember=True, duration=timedelta(days=30))
+
+        delta = timedelta(days=30)
+        login_user(new_user, remember=True, duration=delta)
         flash('Signed up successfully.')
         url = url_for('show_homepage')
         return redirect(url)
@@ -107,9 +110,9 @@ def logout():
 @login_required
 @admin_required
 def show_all_users():
-    
+    all_users = User.query.all()
     display = "You made it!"
-    return render_template("test.html", display=display)
+    return render_template("all_users.html",users=all_users, display=display)
 
 
 @app.route("/remind", methods=["POST", "GET"])
