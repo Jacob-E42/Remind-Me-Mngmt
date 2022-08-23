@@ -40,6 +40,8 @@ class User(db.Model, UserMixin):
         
         return f" {self.id} {self.first_name} {self.last_name} "
 
+    def change_admin(self):
+        self.is_admin = not self.is_admin
 
     @classmethod
     def register(cls, pwd, data):

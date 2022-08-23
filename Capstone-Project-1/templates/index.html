@@ -38,7 +38,7 @@ Home
             </div>
         </div>
     </nav>
-    <p >{{current_user}} - authenticated: {{current_user.is_authenticated}} - is_admin:{{current_user.is_admin}}</p>
+    <p >{{current_user}} - authenticated: {{current_user.is_authenticated}} - is_admin:{{current_user.is_admin}}</p> <form method="post" action="/change"><button class="btn btn-success" type="submit">Change</button></form>
     {%block content%}
     {%endblock%}
 {%endblock%}

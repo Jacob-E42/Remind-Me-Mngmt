@@ -5,6 +5,7 @@ from flask import Flask, request, redirect, render_template, session, flash, url
 from models import db, connect_db, User, Assignment, Task
 from forms import LoginForm, SignupForm
 from flask_login import LoginManager, current_user, login_required, login_user, logout_user
+from functools import wraps
 from secret import ACCOUNT_SID, TEST_AUTH_TOKEN, AUTH_TOKEN, SERVICE_SID, SECRET_KEY
 from flask_debugtoolbar import DebugToolbarExtension
 from datetime import timedelta
@@ -44,12 +45,14 @@ BASE_URL = "https://api.txtlocal.com/send/"
 
 # ------------------------------------------------------------------------------------------
 def admin_required(func):
-    def validate_is_admin():
+    @wraps(func)
+    def validate_is_admin(*args, **kwargs):
         if not current_user.is_admin:
             flash("You must be an admin to access this page", "danger")
             return login_manager.unauthorized()
         
-        return func()
+        return func(*args, **kwargs)
+        
     return validate_is_admin
 
 @app.route('/')
@@ -88,7 +91,6 @@ def signup():
     if form.validate_on_submit():
         data = {k:v for k,v in form.data.items() if k != "password" and k != "csrf_token"}
         new_user = User.register(form.password.data, data)
-        print("************************", new_user)
         db.session.add(new_user)
         db.session.commit()
 
@@ -108,12 +110,30 @@ def logout():
 
 @app.route("/users")
 @login_required
-@admin_required
+
 def show_all_users():
     all_users = User.query.all()
-    display = "You made it!"
-    return render_template("all_users.html",users=all_users, display=display)
+  
+    return render_template("all_users.html",users=all_users)
 
+
+
+@app.route("/users/<int:id>")
+@admin_required
+@login_required
+def show_user_details(id):
+    user = User.query.get_or_404(id)
+    return render_template("user_details.html", user=user)
+
+@app.route("/change", methods=["POST", "GET"])
+def change_admin_status():
+    USER.change_admin()
+    db.session.commit()
+    flash("Admin status changed", "success")
+    
+
+    return redirect("/")
+    
 
 @app.route("/remind", methods=["POST", "GET"])
 @login_required
@@ -167,7 +187,6 @@ def incoming_sms():
 
 @login_manager.user_loader
 def load_user(user_id):
-    print("*************************", user_id)
     user = User.query.get(user_id)
     if user: 
         return user

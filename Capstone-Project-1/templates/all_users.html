@@ -1,13 +1,13 @@
 {% extends 'index.html' %}
 
 {%block content%}
-    {{display}}
+
     <section>
         <ul>
             {%for user in users%}  
                 <div class="card container">
                     <div class="card-body">
-                        <h5 class="card-title">{{user.first_name}} {{user.last_name}}</h5>
+                        <h5 class="card-title"><a href="{{ url_for('show_user_details', id=user.id) }}" class="text-dark text-decoration-none">{{user.first_name}} {{user.last_name}}</a></h5>
                         <a href="#" class="btn btn-primary">Assign Task</a> 
                         <a href="#" class="btn btn-secondary">Edit</a>
                         <a href="#" class="btn btn-danger">Delete</a>
