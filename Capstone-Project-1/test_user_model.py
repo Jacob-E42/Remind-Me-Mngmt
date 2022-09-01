@@ -14,7 +14,7 @@ from sqlalchemy import exc
 os.environ['DATABASE_URL'] = "postgresql:///organizations_test"
 from app import app
 app.test_client_class = FlaskLoginClient
-
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///organizations_test'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = False
 app.config['TESTING'] = True

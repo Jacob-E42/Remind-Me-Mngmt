@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, FloatField, PasswordField, EmailField
+from wtforms import StringField, PasswordField, EmailField, TextAreaField, RadioField, DateTimeField, BooleanField, SelectField
 from models import User, Task, Assignment, db
 from wtforms.validators import DataRequired, Email, Length, EqualTo, NumberRange, Optional, URL, AnyOf, NoneOf, Regexp
 
@@ -21,3 +21,10 @@ class SignupForm(FlaskForm):
     
 
 
+class CreateTaskForm(FlaskForm):
+
+  title = StringField("Title", validators=[DataRequired(message="Title is required")])
+  description = TextAreaField("Description", validators=[])
+  resp_type = SelectField("Type", choices=[("personal","Personal"), ("organizational", "Organizational")])
+  due_time = DateTimeField("Time Due", format='%Y-%m-%d')
+  is_completed = BooleanField("Completed")

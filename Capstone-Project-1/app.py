@@ -3,7 +3,7 @@
 
 from flask import Flask, request, redirect, render_template, session, flash, url_for, abort
 from models import db, connect_db, User, Assignment, Task
-from forms import LoginForm, SignupForm
+from forms import LoginForm, SignupForm, CreateTaskForm
 from flask_login import LoginManager, current_user, login_required, login_user, logout_user
 from functools import wraps
 from secret import ACCOUNT_SID, TEST_AUTH_TOKEN, AUTH_TOKEN, SERVICE_SID, SECRET_KEY
@@ -14,7 +14,7 @@ from twilio.rest import Client
 import requests
 from urllib.parse import urlparse, urljoin
 
-# --------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------- Setup and Configurations
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///organizations_db' 
@@ -42,8 +42,12 @@ login_manager.needs_refresh_message_category = "danger"
 USER = current_user
 BASE_URL = "https://api.txtlocal.com/send/"
 
+@app.route('/')
+def show_homepage():
+    
+    return render_template("home.html")
 
-# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------ User login functions
 def admin_required(func):
     @wraps(func)
     def validate_is_admin(*args, **kwargs):
@@ -55,10 +59,23 @@ def admin_required(func):
         
     return validate_is_admin
 
-@app.route('/')
-def show_homepage():
-    
-    return render_template("home.html")
+@login_manager.user_loader
+def load_user(user_id):
+    user = User.query.get(user_id)
+    if user: 
+        return user
+    return None
+
+
+def is_safe_url(target):
+    ref_url = urlparse(request.host_url)
+    test_url = urlparse(urljoin(request.host_url, target))
+    return test_url.scheme in ('http', 'https') and \
+           ref_url.netloc == test_url.netloc
+
+
+
+#-------------------------------------------------------------------------------------- User-login Routes
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -108,7 +125,9 @@ def logout():
     logout_user()
     return redirect(f"{url_for('show_homepage')}")
 
-@app.route("/users")
+#------------------------------------------------------------------------------------------------- User Routes
+
+@app.route("/users", methods=["GET"])
 @login_required
 
 def show_all_users():
@@ -118,23 +137,90 @@ def show_all_users():
 
 
 
-@app.route("/users/<int:id>")
+@app.route("/users/<int:id>", methods=["GET"])
 @admin_required
-@login_required
+
 def show_user_details(id):
     user = User.query.get_or_404(id)
-    return render_template("user_details.html", user=user)
+    tasks = user.tasks
+    return render_template("user_details.html", user=user, tasks=tasks)
 
-@app.route("/change", methods=["POST", "GET"])
-def change_admin_status():
-    USER.change_admin()
-    db.session.commit()
-    flash("Admin status changed", "success")
+@app.route("/users/<int:id>", methods=["POST"])
+def create_user(id):
+    return "You didn't implement me yet!"
+
+@app.route("/users/<int:id>", methods=["PUT", "PATCH"])
+@admin_required
+def edit_user(id):
+    return "You didn't implement me yet!"
+
+@app.route("/users/<int:id>", methods=["DELETE"])
+@admin_required
+def delete_user(id):
+    return "You didn't implement me yet!"
+
+
     
+#------------------------------------------------------------------------------------------------ Task routes
 
-    return redirect("/")
-    
+@app.route("/tasks", methods=["GET", "POST"])
+@admin_required
+def create_task():
+    form = CreateTaskForm()
+    print(form.due_time.data)
+    if form.validate_on_submit():
+        
+        data = {k:v for k,v in form.data.items() if k != "csrf_token"}
+        new_task = Task(created_by=USER.id, **data)
+        db.session.add(new_task)
+        db.session.commit()
+        
+        return redirect("/")
+    return render_template("create_task.html", form=form)
 
+@app.route("/tasks/<int:id>", methods=["GET"])
+def show_task(id):
+    return "You didn't implement me yet!"
+
+
+@app.route("/tasks/<int:id>", methods=["POST"])
+def post_task(id):
+    return "You didn't implement me yet!"
+
+@app.route("/tasks/<int:id>", methods=["PUT", "PATCH"])
+def edit_task(id):
+    return "You didn't implement me yet!"
+
+@app.route("/tasks/<int:id>", methods=["DELETE"])
+def delete_task(id):
+    return "You didn't implement me yet!"
+
+@app.route("/tasks/<int:id>/completed", methods=["PUT", "PATCH"])
+def edit_completed_task(id):
+    return "You didn't implement me yet!"
+
+@app.route("/tasks/<int:id>/assignments", methods=["PUT", "PATCH"])
+def edit_assignment(id):
+    return "You didn't implement me yet!"
+
+@app.route("/tasks/upcoming", methods=["GET"])
+def show_upcoming_tasks():
+    return "You didn't implement me yet!"
+
+@app.route("/tasks/incomplete", methods=["GET"])
+def show_incomplete_tasks():
+    return "You didn't implement me yet!"
+
+@app.route("/tasks/completed", methods=["GET"])
+def show_completed_tasks():
+    return "You didn't implement me yet!"
+
+@app.route("/assign", methods=["GET", "POST"])
+def assign_task_by_default():
+    user_id = current_user.id
+    assign_task(user_id, 1)
+    return redirect("/")          #(url_for('show_user_details', id=user_id))
+#------------------------------------------------------------------------------------------------------ Reminder routes
 @app.route("/remind", methods=["POST", "GET"])
 @login_required
 def send_sms():
@@ -153,6 +239,25 @@ def send_sms():
     print(notification.sid)
     return render_template("test.html", display=notification.sid)
 
+@app.route("/remind/daily", methods=["POST", "GET"])
+@login_required
+def send_daily_reminder():
+    return "You didn't implement me yet!"
+
+@app.route("/remind/<task_ids>", methods=["POST", "GET"])
+@login_required
+def remind_about_tasks(task_ids):
+    return "You didn't implement me yet!"
+
+@app.route("/remind/<user_ids>", methods=["POST", "GET"])
+@login_required
+def remind_users(user_ids):
+    return "You didn't implement me yet!"
+
+@app.route("/notify/<int:task_id>", methods=["POST", "GET"])
+@admin_required
+def notify_admin(task_id):
+    return "You didn't implement me yet!"
 
 @app.route("/bind")
 @login_required
@@ -185,19 +290,20 @@ def incoming_sms():
     logging.info('SID: {}, Status: {}'.format(message_sid, message_status))
     return ('', 204)
 
-@login_manager.user_loader
-def load_user(user_id):
-    user = User.query.get(user_id)
-    if user: 
-        return user
-    return None
+
+
+#------------------------------------------------------------------------ For debugging, to be deleted later
+
+def assign_task(user_id, task_id):
+    user = load_user(user_id)
+    task = Task.query.get(task_id)
+    user.tasks.append(task)
 
 
 
-def is_safe_url(target):
-    ref_url = urlparse(request.host_url)
-    test_url = urlparse(urljoin(request.host_url, target))
-    return test_url.scheme in ('http', 'https') and \
-           ref_url.netloc == test_url.netloc
-
-
+@app.route("/change", methods=["POST", "GET"])
+def change_admin_status():
+    USER.change_admin()
+    db.session.commit()
+    flash("Admin status changed", "success")
+    return redirect("/")

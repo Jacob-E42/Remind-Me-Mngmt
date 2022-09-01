@@ -20,7 +20,7 @@ Home
 
                     <a class="nav-item nav-link " href="/users">Users</a>
                     <a class="nav-item nav-link reg" href="#">My Tasks</a>
-                    <a class="nav-item nav-link" href="#">Create Task</a>
+                    <a class="nav-item nav-link" href="/tasks/create">Create Task</a>
                     
                     <a class="nav-item nav-link admin" href="#">Upcoming Tasks</a>
                     <a class="nav-item nav-link admin" href="#">Incompleted Tasks</a>
@@ -38,7 +38,7 @@ Home
             </div>
         </div>
     </nav>
-    <p >{{current_user}} - authenticated: {{current_user.is_authenticated}} - is_admin:{{current_user.is_admin}}</p> <form method="post" action="/change"><button class="btn btn-success" type="submit">Change</button></form>
+    <p >{{current_user}}  |  authenticated: {{current_user.is_authenticated}}   |  is_admin:{{current_user.is_admin}}</p> <form id="change-form" method="post" action="/change"><button class="btn btn-success" type="submit">Change</button></form>
     {%block content%}
     {%endblock%}
 {%endblock%}

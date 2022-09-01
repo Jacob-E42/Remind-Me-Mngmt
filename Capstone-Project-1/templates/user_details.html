@@ -5,10 +5,30 @@
     <div class="card">
         <div class="card-body">
             <h5 class="card-title"><a href="#" class="text-dark text-decoration-none">{{user.first_name}} {{user.last_name}}</a></h5>
-            <a href="#" class="btn btn-primary">Assign Task</a> 
+            <p class="card-text">{{user.username}} {{user.phone}} {{user.email}} {% if user.is_admin %} - Admin {%endif%}</p>
+            <form action="/assign" method="post"><button class="btn btn-primary">Assign Task</button></form>
             <a href="#" class="btn btn-secondary">Edit</a>
             <a href="#" class="btn btn-danger">Delete</a>
         </div>
+    </div>
+</div>
+
+<div class="container">
+    <h5 class="">Upcoming Tasks</h5><hr>
+    <div>
+        
+    </div>
+</div>
+<div class="container">
+    <h5 class="">Incomplete Tasks</h5><hr>
+    <div>
+        
+    </div>
+</div>
+<div class="container">
+    <h5 class="">Complete Tasks</h5><hr>
+    <div>
+        
     </div>
 </div>
 {%endblock%}

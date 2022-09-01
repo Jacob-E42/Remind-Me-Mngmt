@@ -20,7 +20,7 @@ class User(db.Model, UserMixin):
      
     __tablename__ = "users"
 
-    id = db.Column(db.Integer, primary_key=True, autoincrement='ignore_fk')
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     first_name = db.Column(db.Text, nullable=False)
     last_name = db.Column(db.Text, nullable=False)
     username = db.Column(db.Text, nullable=False, unique=True)
@@ -83,7 +83,7 @@ class Task(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement='ignore_fk')
     is_completed = db.Column(db.Boolean, nullable=False, default=False)
-    _type = db.Column(db.Enum('personal', 'organizational', name="types"), nullable=False)
+    resp_type = db.Column(db.String(), nullable=False)
     title = db.Column(db.String(180), nullable=False)
     description = db.Column(db.Text)
     due_time  = db.Column(db.DateTime, nullable=False)
@@ -99,10 +99,10 @@ class Assignment(db.Model):
     __tablename__ = "assignments"
 
 
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    # id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     assigner_id = db.Column(db.Integer, nullable=False)
-    assignee_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
-    task_id = db.Column(db.Integer, db.ForeignKey("tasks.id"), nullable=False)
+    assignee_id = db.Column(db.Integer,  db.ForeignKey("users.id"), primary_key=True, nullable=False)
+    task_id = db.Column(db.Integer, db.ForeignKey("tasks.id"), primary_key=True, nullable=False)
     remind_asignee = db.Column(db.Boolean, nullable=False, default=True)
     notify_assigner = db.Column(db.Boolean, nullable=False, default=True)
  
