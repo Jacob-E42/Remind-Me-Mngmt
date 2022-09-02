@@ -7,7 +7,7 @@
             <h5 class="card-title"><a href="#" class="text-dark text-decoration-none">{{user.first_name}} {{user.last_name}}</a></h5>
             <p class="card-text">{{user.username}} {{user.phone}} {{user.email}} {% if user.is_admin %} - Admin {%endif%}</p>
             <form action="/assign" method="post"><button class="btn btn-primary">Assign Task</button></form>
-            <a href="#" class="btn btn-secondary">Edit</a>
+            <a href="{{url_for('edit_user', id=user.id)}}" class="btn btn-secondary">Edit</a>
             <a href="#" class="btn btn-danger">Delete</a>
         </div>
     </div>

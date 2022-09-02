@@ -43,9 +43,9 @@ class UserModelTestCase(TestCase):
         db.session.add_all([john, emily, frank])
         db.session.commit()
 
-        task1 = Task(_type="personal", title="Check Inventory", description="perform weekly inventory count", due_time=datetime(2022, 8, 15), created_by=1)
-        task2 = Task(_type="personal", title="Make Budget", due_time=datetime(2022, 8, 15), created_by=1)
-        task3 = Task(_type="personal", title="Reconcile Bank Statements", due_time=datetime(2022, 8, 15), created_by=1)
+        task1 = Task(resp_type="personal", title="Check Inventory", description="perform weekly inventory count", due_time=datetime(2022, 8, 15), created_by=1)
+        task2 = Task(resp_type="personal", title="Make Budget", due_time=datetime(2022, 8, 15), created_by=1)
+        task3 = Task(resp_type="personal", title="Reconcile Bank Statements", due_time=datetime(2022, 8, 15), created_by=1)
 
         task1.id = 1
         task2.id = 2

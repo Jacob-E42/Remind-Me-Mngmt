@@ -9,7 +9,7 @@
                     <div class="card-body">
                         <h5 class="card-title"><a href="{{ url_for('show_user_details', id=user.id) }}" class="text-dark text-decoration-none">{{user.first_name}} {{user.last_name}}</a></h5>
                         <a href="#" class="btn btn-primary">Assign Task</a> 
-                        <a href="#" class="btn btn-secondary">Edit</a>
+                        <a href="{{url_for('edit_user', id=user.id)}}" class="btn btn-secondary">Edit</a>
                         <a href="#" class="btn btn-danger">Delete</a>
                     </div>
                 </div>

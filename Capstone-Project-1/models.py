@@ -31,9 +31,7 @@ class User(db.Model, UserMixin):
     is_admin = db.Column(db.Boolean, nullable=False, default=False)
 
     
-
-
-    tasks = db.relationship("Task", backref="users", secondary="assignments")
+    tasks = db.relationship("Task", secondary="assignments", backref="users")
    
 
     def __repr__(self):
@@ -91,6 +89,8 @@ class Task(db.Model):
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     time_completed = db.Column(db.DateTime, server_onupdate=db.func.now())
 
+    assignees = db.relationship('User', secondary='assignments')
+
     
 
 
@@ -106,6 +106,6 @@ class Assignment(db.Model):
     remind_asignee = db.Column(db.Boolean, nullable=False, default=True)
     notify_assigner = db.Column(db.Boolean, nullable=False, default=True)
  
-    # tasks = db.relationship("Task", backref="assignments", foreign_keys=[Task.created_by])
+    
 
    

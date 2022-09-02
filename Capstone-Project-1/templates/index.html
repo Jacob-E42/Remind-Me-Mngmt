@@ -5,7 +5,6 @@ Home
 {%endblock%}
 
 
-
 {%block nav%}
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary ">
         <div class="container-fluid">
@@ -19,8 +18,10 @@ Home
 
 
                     <a class="nav-item nav-link " href="/users">Users</a>
-                    <a class="nav-item nav-link reg" href="#">My Tasks</a>
-                    <a class="nav-item nav-link" href="/tasks/create">Create Task</a>
+                    
+                    <a class="nav-item nav-link reg" href="{{url_for('show_all_user_tasks')}}">My Tasks</a>
+                    
+                    <a class="nav-item nav-link" href="{{url_for('create_task')}}">Create Task</a>
                     
                     <a class="nav-item nav-link admin" href="#">Upcoming Tasks</a>
                     <a class="nav-item nav-link admin" href="#">Incompleted Tasks</a>

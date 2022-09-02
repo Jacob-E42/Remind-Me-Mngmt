@@ -1,0 +1,29 @@
+{% extends 'index.html' %}
+
+
+{%block content%}
+<h1 class="display-3">Edit User</h1>
+
+<div class="container">
+    <form action="{{url_for('edit_user', id=user.id)}}">
+        {{ form.hidden_tag() }} <!--add type=hidden form fields -->
+
+        {% for field in form
+                if field.widget.input_type != 'hidden' %}
+
+            <p>
+            {{ field.label }}
+            {{ field }}
+
+            {% for error in field.errors %}
+                {{ error }}
+            {% endfor %}
+            </p>
+
+        {% endfor %}
+
+        <button class="btn btn-primary" type="submit">Submit</button>
+        <a class="btn btn-info" href="/">Back</a>
+    </form>
+</div>
+{%endblock%}

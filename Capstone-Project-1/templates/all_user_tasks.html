@@ -2,5 +2,37 @@
 
 
 {%block content%}
-    
+<h1 class="display-2">My Tasks</h1>
+
+<div class="container">
+    <ul>
+        {% for task in tasks %}
+        
+        <li class="card">
+            <div class="card-body">
+                <div class="card-title">
+                    {{task.title}} {{task.due_time}}
+                </div>
+                <form class="card-text">
+
+                    <div class="row">
+                        <div class="col">
+                            <button class="btn btn-primary">Mark complete</button>
+                            <button class="btn btn-info" formaction="{{url_for('assign_task', id=task.id)}}" formmethod="get">Reassign</button>
+                            <button class="btn btn-warning">Remind</button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <button class="btn btn-success">Edit</button>
+                            <button class="btn btn-outline-danger">Detete</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+        </li>
+        {%endfor%}
+    </ul>
+</div>
 {%endblock%}
