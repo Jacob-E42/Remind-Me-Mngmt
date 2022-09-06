@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, EmailField, TextAreaField, RadioField, DateTimeField, BooleanField, SelectField
+from wtforms import StringField, PasswordField, EmailField, TextAreaField, RadioField, DateTimeField, BooleanField, SelectField, SelectMultipleField
 from models import User, Task, Assignment, db
 from wtforms.validators import DataRequired, Email, Length, EqualTo, NumberRange, Optional, URL, AnyOf, NoneOf, Regexp
 
@@ -44,6 +44,6 @@ class EditTaskForm(FlaskForm):
   is_completed = BooleanField("Completed")
 
 class AssignTaskForm(FlaskForm):
-  assignee = SelectField("Assign To", coerce=int, validators=[DataRequired(message="A user is required")])
+  assignee_id = SelectMultipleField("Assign To", coerce=int, validators=[DataRequired(message="A user is required")])
   remind_daily = BooleanField("Remind Daily", validators=[])
   notify_admin = BooleanField("Notify Admin When Completed", validators=[])

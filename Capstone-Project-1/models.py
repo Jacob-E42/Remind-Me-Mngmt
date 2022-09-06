@@ -31,7 +31,7 @@ class User(db.Model, UserMixin):
     is_admin = db.Column(db.Boolean, nullable=False, default=False)
 
     
-    tasks = db.relationship("Task", secondary="assignments", backref="users")
+    # tasks = db.relationship("Task", secondary="assignments", backref="users")
    
 
     def __repr__(self):
@@ -71,11 +71,27 @@ class User(db.Model, UserMixin):
         else:
             return (False, "The password provided is incorrect")
     
-    
-    
+
+
+class Assignment(db.Model):
+
+    __tablename__ = "assignments"
+
+
+    # id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    assigner_id = db.Column(db.Integer, nullable=False)
+    assignee_id = db.Column(db.Integer,  db.ForeignKey("users.id"), primary_key=True, nullable=False)
+    task_id = db.Column(db.Integer, db.ForeignKey("tasks.id"), primary_key=True, nullable=False)
+    remind_daily = db.Column(db.Boolean, nullable=False, default=True)
+    notify_admin = db.Column(db.Boolean, nullable=False, default=True)
+ 
+    def __repr__(self):
+        
+        return f" {self.assignee_id} {self.task_id} {self.remind_daily} {self.notify_admin} "
+
 class Task(db.Model):
 
-     
+    
     __tablename__ = "tasks"
 
 
@@ -89,23 +105,8 @@ class Task(db.Model):
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     time_completed = db.Column(db.DateTime, server_onupdate=db.func.now())
 
-    assignees = db.relationship('User', secondary='assignments')
+    users = db.relationship("User", secondary="assignments", backref="tasks")
 
-    
-
-
-class Assignment(db.Model):
-
-    __tablename__ = "assignments"
-
-
-    # id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    assigner_id = db.Column(db.Integer, nullable=False)
-    assignee_id = db.Column(db.Integer,  db.ForeignKey("users.id"), primary_key=True, nullable=False)
-    task_id = db.Column(db.Integer, db.ForeignKey("tasks.id"), primary_key=True, nullable=False)
-    remind_asignee = db.Column(db.Boolean, nullable=False, default=True)
-    notify_assigner = db.Column(db.Boolean, nullable=False, default=True)
- 
-    
-
-   
+    def __repr__(self):
+        
+        return f" {self.id} {self.title} {self.due_time} {self.is_completed}"

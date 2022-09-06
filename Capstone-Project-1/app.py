@@ -4,7 +4,7 @@
 from flask import Flask, request, redirect, render_template, session, flash, url_for, abort
 from models import db, connect_db, User, Assignment, Task
 from forms import LoginForm, SignupForm, CreateTaskForm, EditUserForm, EditTaskForm, AssignTaskForm
-from flask_login import LoginManager, current_user, login_required, login_user, logout_user
+from flask_login import LoginManager, current_user, login_required, login_user, logout_user, UserMixin
 from functools import wraps
 from secret import ACCOUNT_SID, TEST_AUTH_TOKEN, AUTH_TOKEN, SERVICE_SID, SECRET_KEY
 from flask_debugtoolbar import DebugToolbarExtension
@@ -54,7 +54,7 @@ def show_homepage():
 def admin_required(func):
     @wraps(func)
     def validate_is_admin(*args, **kwargs):
-        if not current_user.is_admin:
+        if not (current_user.is_authenticated and current_user.is_admin):
             flash("You must be an admin to access this page", "danger")
             return login_manager.unauthorized()
 
@@ -101,7 +101,7 @@ def login():
         else:
             flash(msg)
 
-    return render_template("login.html", form=form)
+    return render_template("login/login.html", form=form)
 
 
 @app.route("/signup", methods=['GET', 'POST'])
@@ -121,7 +121,7 @@ def signup():
         url = url_for('show_homepage')
         return redirect(url)
     else:
-        return render_template("signup.html", form=form)
+        return render_template("login/signup.html", form=form)
 
 
 @app.route("/logout")
@@ -138,7 +138,7 @@ def logout():
 def show_all_users():
     all_users = User.query.all()
 
-    return render_template("all_users.html", users=all_users, current_user=current_user)
+    return render_template("users/all_users.html", users=all_users, current_user=current_user)
 
 
 @app.route("/users/<int:id>", methods=["GET"])
@@ -147,24 +147,19 @@ def show_user_details(id):
     user = User.query.get_or_404(id)
     tasks = user.tasks
 
-    return render_template("user_details.html", user=user, tasks=tasks)
+    return render_template("users/user_details.html", user=user, tasks=tasks)
 
 
-@app.route("/users/all_tasks", methods=["GET"])
+@app.route("/users/<int:id>/my_tasks", methods=["GET"])
 @login_required
-def show_all_user_tasks():
-    user = current_user
-    user1 = User.query.filter_by(first_name='John').first()
-    tasks = Task.query.all()
-    print(user)
-    print(user.tasks)
-    print(type(user))
-    print(current_user.tasks)
-    print(user1)
-    print(user1.tasks)
-    print(type(user1))
+def show_all_user_tasks(id):
+    user = User.query.filter(User.id == id).first()
+    
+    tasks = user.tasks
+    print("*****************",user)
+    print("*****************",tasks)
 
-    return render_template("all_user_tasks.html", user=user, tasks=tasks)
+    return render_template("users/all_user_tasks.html", user=user, tasks=tasks)
 
 
 @app.route("/users/<int:id>", methods=["POST"])
@@ -177,7 +172,7 @@ def create_user(id):
 def edit_user(id):
     user = load_user(id)
     form = EditUserForm(obj=user)
-    return render_template("edit_user.html", form=form, user=user)
+    return render_template("users/edit_user.html", form=form, user=user)
 
 
 @app.route("/users/<int:id>", methods=["DELETE"])
@@ -188,7 +183,7 @@ def delete_user(id):
 
 # ------------------------------------------------------------------------------------------------ Task routes
 
-@app.route("/tasks", methods=["GET", "POST"])
+@app.route("/create_task", methods=["GET", "POST"])
 @admin_required
 def create_task():
     form = CreateTaskForm()
@@ -201,8 +196,12 @@ def create_task():
         db.session.commit()
         flash("New Task Created!", "success")
         return redirect("/")
-    return render_template("create_task.html", form=form)
+    return render_template("tasks/create_task.html", form=form)
 
+@app.route("/tasks", methods=["GET"])
+def show_all_tasks():
+    tasks = Task.query.all()
+    return render_template("tasks/all_tasks.html", tasks=tasks)
 
 @app.route("/tasks/<int:id>", methods=["GET"])
 def show_task(id):
@@ -241,8 +240,21 @@ def edit_assignment(id):
 def assign_task(id):
     form = AssignTaskForm()
     task = Task.query.get(id)
-    form.assignee.choices = [(u.id, u.first_name + " " + u.last_name) for u in User.query.all()]
-    return render_template("create_assignment.html", form=form, task=task)
+    form.assignee_id.choices = [(u.id, u.first_name + " " + u.last_name) for u in User.query.all()]
+
+    if form.validate_on_submit():
+        form_data = {k:v for k,v in form.data.items() if k != "csrf_token" and k != "assignee_id"}
+        data = {"assigner_id" : current_user.id, "task_id" : id, **form_data}
+        assignees = form.assignee_id.data
+        for assignee in assignees:
+            new_assignment = Assignment(assignee_id=assignee, **data)
+            print(data)
+            print(new_assignment)
+            db.session.add(new_assignment)
+            db.session.commit()
+        flash("Assignment Created!", "success")
+        return redirect(url_for('show_all_user_tasks', id=current_user.id))
+    return render_template("tasks/create_assignment.html", form=form, task=task)
 
 
 @app.route("/tasks/upcoming", methods=["GET"])
