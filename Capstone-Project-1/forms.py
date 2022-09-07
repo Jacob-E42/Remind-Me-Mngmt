@@ -43,7 +43,12 @@ class EditTaskForm(FlaskForm):
   due_time = DateTimeField("Time Due", format='%Y-%m-%d')
   is_completed = BooleanField("Completed")
 
+class AssignUserForm(FlaskForm):
+  assignee_id = SelectMultipleField("Assign To", coerce=int, validators=[])
+  remind_daily = BooleanField("Remind Daily", validators=[])
+  notify_admin = BooleanField("Notify Admin When Completed", validators=[])
+
 class AssignTaskForm(FlaskForm):
-  assignee_id = SelectMultipleField("Assign To", coerce=int, validators=[DataRequired(message="A user is required")])
+  task_id = SelectMultipleField("Assign Task", coerce=int, validators=[])
   remind_daily = BooleanField("Remind Daily", validators=[])
   notify_admin = BooleanField("Notify Admin When Completed", validators=[])

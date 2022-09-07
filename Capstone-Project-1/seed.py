@@ -26,5 +26,11 @@ task3 = Task(resp_type="personal", title="Reconcile Bank Statements", due_time=d
 db.session.add_all([task1, task2, task3])
 db.session.commit()
 
+assign1 = Assignment(assigner_id=john.id, assignee_id=john.id, task_id=task1.id, notify_admin=True, remind_daily=True)
+assign2 = Assignment(assigner_id=john.id, assignee_id=emily.id, task_id=task2.id, notify_admin=True, remind_daily=True)
+assign3 = Assignment(assigner_id=john.id, assignee_id=frank.id, task_id=task3.id, notify_admin=True, remind_daily=True)
+assign4 = Assignment(assigner_id=john.id, assignee_id=emily.id, task_id=task3.id, notify_admin=True, remind_daily=True)
+db.session.add_all([assign1, assign2, assign3, assign4])
+db.session.commit()
 
 

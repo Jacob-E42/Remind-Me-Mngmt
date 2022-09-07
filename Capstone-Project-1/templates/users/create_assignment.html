@@ -2,12 +2,12 @@
 
 
 {%block content%}
-<h1 class="display-3">Assign User</h1>
+<h1 class="display-3">Assign Task</h1>
 
 <div class="container">
-    <form action="{{url_for('assign_user_to_task', id=task.id)}}" method="post">
+    <form action="{{url_for('assign_task_to_user', id=user.id)}}" method="post">
 
-        <p class="">{{task.title}}  Due: {{task.due_time}}  Task Type: {{task.resp_type}}</p>
+        <p class="">{{user.first_name}} {{user.last_name}} </p>
 
         {{ form.hidden_tag() }} <!--add type=hidden form fields -->
 

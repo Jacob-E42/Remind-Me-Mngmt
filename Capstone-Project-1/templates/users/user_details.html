@@ -6,13 +6,44 @@
         <div class="card-body">
             <h5 class="card-title"><a href="#" class="text-dark text-decoration-none">{{user.first_name}} {{user.last_name}}</a></h5>
             <p class="card-text">{{user.username}} {{user.phone}} {{user.email}} {% if user.is_admin %} - Admin {%endif%}</p>
-            <form action="/assign" method="post"><button class="btn btn-primary">Assign Task</button></form>
+            <a class="btn btn-primary" href="{{url_for('assign_task_to_user', id=user.id)}}">Assign Task</a>
             <a href="{{url_for('edit_user', id=user.id)}}" class="btn btn-secondary">Edit</a>
             <a href="#" class="btn btn-danger">Delete</a>
         </div>
     </div>
 </div>
+<div class="container">
+    <ul>
+        
+        {% for task in tasks %}
+        
+        <li class="card">
+            <div class="card-body">
+                <div class="card-title">
+                    {{task.title}} {{task.due_time}}
+                </div>
+                <form class="card-text">
+                    
+                    <div class="row">
+                        <div class="col">
+                            <button class="btn btn-primary">Mark complete</button>
+                            <button class="btn btn-info" formaction="{{url_for('assign_task_to_user', id=user.id)}}" formmethod="get">Reassign</button>
+                            <button class="btn btn-warning">Remind</button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <button class="btn btn-success">Edit</button>
+                            <button class="btn btn-outline-danger">Detete</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
 
+        </li>
+        {%endfor%}
+    </ul>
+</div>
 <div class="container">
     <h5 class="">Upcoming Tasks</h5><hr>
     <div>

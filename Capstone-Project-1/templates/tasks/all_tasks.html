@@ -15,11 +15,15 @@
                     {{task.title}} {{task.due_time}}
                 </div>
                 <form class="card-text">
-
+                    <p class="text-end">Assigned To: 
+                        {%for user in task.users%}
+                            <p class="text-end">{{user.first_name}} {{user.last_name}}</p>
+                        {%endfor%}
+                    </p>
                     <div class="row">
                         <div class="col">
                             <button class="btn btn-primary">Mark complete</button>
-                            <button class="btn btn-info" formaction="{{url_for('assign_task', id=task.id)}}" formmethod="get">Reassign</button>
+                            <button class="btn btn-info" formaction="{{url_for('assign_user_to_task', id=task.id)}}" formmethod="get">Reassign</button>
                             <button class="btn btn-warning">Remind</button>
                         </div>
                     </div>

@@ -4,6 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql import func
 from flask_bcrypt import Bcrypt
 from flask_login import UserMixin
+from sqlalchemy.orm import backref
 
 bcrypt = Bcrypt()
 
@@ -30,8 +31,6 @@ class User(db.Model, UserMixin):
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     is_admin = db.Column(db.Boolean, nullable=False, default=False)
 
-    
-    # tasks = db.relationship("Task", secondary="assignments", backref="users")
    
 
     def __repr__(self):
@@ -84,6 +83,8 @@ class Assignment(db.Model):
     task_id = db.Column(db.Integer, db.ForeignKey("tasks.id"), primary_key=True, nullable=False)
     remind_daily = db.Column(db.Boolean, nullable=False, default=True)
     notify_admin = db.Column(db.Boolean, nullable=False, default=True)
+
+    task = db.relationship("Task", back_populates="assignments")
  
     def __repr__(self):
         
@@ -105,7 +106,9 @@ class Task(db.Model):
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     time_completed = db.Column(db.DateTime, server_onupdate=db.func.now())
 
+    
     users = db.relationship("User", secondary="assignments", backref="tasks")
+    assignments = db.relationship("Assignment", back_populates="task")
 
     def __repr__(self):
         
