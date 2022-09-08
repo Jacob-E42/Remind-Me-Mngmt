@@ -56,7 +56,7 @@ def admin_required(func):
     def validate_is_admin(*args, **kwargs):
         if not (current_user.is_authenticated and current_user.is_admin):
             flash("You must be an admin to access this page", "danger")
-            return login_manager.unauthorized()
+            return redirect(url_for('login'))
 
         return func(*args, **kwargs)
 
@@ -233,6 +233,8 @@ def create_task():
         new_task = Task(created_by=USER.id, **data)
         db.session.add(new_task)
         db.session.commit()
+
+        
         flash("New Task Created!", "success")
         return redirect("/")
     return render_template("tasks/create_task.html", form=form)
@@ -297,8 +299,7 @@ def assign_user_to_task(id):
     form = AssignUserForm()
     task = Task.query.get(id)
     assigned_user_ids = [user.id for user in task.users]
-    form.assignee_id.choices = [
-        (u.id, u.first_name + " " + u.last_name) for u in User.query.all()]
+    form.assignee_id.choices = [(u.id, u.first_name + " " + u.last_name) for u in User.query.all()]
 
     if form.validate_on_submit():
         form_data = {k: v for k, v in form.data.items(
