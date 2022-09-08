@@ -90,7 +90,7 @@ def login():
         if user:
             delta = timedelta(days=30)
             login_user(user, remember=True, duration=delta)
-            flash(msg)
+            flash(msg, "success")
             next = request.args.get('next')
 
             # is_safe_url should check if the url is safe for redirects.
@@ -99,7 +99,7 @@ def login():
                 return abort(400)
             return redirect(next or url_for('show_homepage'))
         else:
-            flash(msg)
+            flash(msg, "danger")
 
     return render_template("login/login.html", form=form)
 
@@ -117,7 +117,7 @@ def signup():
 
         delta = timedelta(days=30)
         login_user(new_user, remember=True, duration=delta)
-        flash('Signed up successfully.')
+        flash('Signed up successfully!', "success")
         url = url_for('show_homepage')
         return redirect(url)
     else:
@@ -128,6 +128,7 @@ def signup():
 @login_required
 def logout():
     logout_user()
+    flash("Logged out", "info")
     return redirect(f"{url_for('show_homepage')}")
 
 # ------------------------------------------------------------------------------------------------- User Routes
@@ -159,23 +160,39 @@ def show_all_user_tasks():
     return render_template("users/all_user_tasks.html", user=user, tasks=tasks)
 
 
-@app.route("/users/<int:id>", methods=["POST"])
-def create_user(id):
-    return "You didn't implement me yet!"
+# @app.route("/users/<int:id>", methods=["POST"])
+# def create_user(id):
+#     return "You didn't implement me yet!"
 
 
-@app.route("/users/<int:id>/edit", methods=["GET", "PUT", "PATCH"])
+@app.route("/users/<int:id>/edit", methods=["GET","POST", "PUT", "PATCH"])
 @admin_required
 def edit_user(id):
     user = load_user(id)
     form = EditUserForm(obj=user)
+    if form.validate_on_submit():
+        data = {k:v for k,v in form.data.items() if k != "csrf_token"}
+        print(data)
+        for (k,v) in data.items():
+            setattr(user, k, v)
+        print(user)
+        db.session.add(user)
+        db.session.commit()
+        flash("User updated!", "success")
+        return redirect(url_for('show_user_details', id=user.id))
+
     return render_template("users/edit_user.html", form=form, user=user)
 
 
-@app.route("/users/<int:id>", methods=["DELETE"])
+@app.route("/users/<int:id>", methods=["POST","DELETE"])
 @admin_required
 def delete_user(id):
-    return "You didn't implement me yet!"
+    print("**************************", id)
+    user = User.query.get_or_404(id)
+    db.session.delete(user)
+    db.session.commit()
+    flash("User deleted!", "danger")
+    return redirect(url_for('show_all_users'))
 
 @app.route("/users/<int:id>/assign", methods=["GET", "POST"])
 @admin_required
@@ -223,7 +240,7 @@ def create_task():
 
 @app.route("/tasks", methods=["GET"])
 def show_all_tasks():
-    tasks = Task.query.all()
+    tasks = Task.query.order_by(Task.id).all()
     assignments = Assignment.query.all()
     return render_template("tasks/all_tasks.html", tasks=tasks, assignments=assignments)
 
@@ -235,7 +252,6 @@ def show_task(id):
 @app.route("/tasks/<int:id>", methods=["POST"])
 def post_task(id):
     return "You didn't implement me yet!"
-
 
 @app.route("/tasks/<int:id>", methods=["PUT", "PATCH"])
 def edit_task(id):
@@ -249,9 +265,14 @@ def delete_task(id):
     return "You didn't implement me yet!"
 
 
-@app.route("/tasks/<int:id>/completed", methods=["PUT", "PATCH"])
-def edit_completed_task(id):
-    return "You didn't implement me yet!"
+@app.route("/tasks/<int:id>/completed", methods=["POST","PUT", "PATCH"])
+def edit_completed_status(id):
+    task = Task.query.get_or_404(id)
+    task.is_completed = not task.is_completed
+    db.session.add(task)
+    db.session.commit()
+    flash("Status changed","success")
+    return redirect(url_for('show_all_tasks'))
 
 
 @app.route("/tasks/<int:id>/assignments", methods=["PUT", "PATCH"])
