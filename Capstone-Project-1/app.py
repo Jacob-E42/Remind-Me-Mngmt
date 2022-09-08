@@ -9,10 +9,10 @@ from functools import wraps
 from secret import ACCOUNT_SID, TEST_AUTH_TOKEN, AUTH_TOKEN, SERVICE_SID, SECRET_KEY
 from flask_debugtoolbar import DebugToolbarExtension
 from datetime import timedelta
-import os
-from twilio.rest import Client
 import requests
 from urllib.parse import urlparse, urljoin
+import os
+from twilio.rest import Client
 
 # -------------------------------------------------------------------------------- Setup and Configurations
 
@@ -234,7 +234,7 @@ def create_task():
         db.session.add(new_task)
         db.session.commit()
 
-        
+
         flash("New Task Created!", "success")
         return redirect("/")
     return render_template("tasks/create_task.html", form=form)
@@ -357,7 +357,7 @@ def show_completed_tasks():
 
 
 @app.route("/remind", methods=["POST", "GET"])
-@login_required
+@admin_required
 def send_sms():
 
     # Your Account SID from twilio.com/console
@@ -376,19 +376,19 @@ def send_sms():
 
 
 @app.route("/remind/daily", methods=["POST", "GET"])
-@login_required
+@admin_required
 def send_daily_reminder():
     return "You didn't implement me yet!"
 
 
 @app.route("/remind/<task_ids>", methods=["POST", "GET"])
-@login_required
+@admin_required
 def remind_about_tasks(task_ids):
     return "You didn't implement me yet!"
 
 
 @app.route("/remind/<user_ids>", methods=["POST", "GET"])
-@login_required
+@admin_required
 def remind_users(user_ids):
     return "You didn't implement me yet!"
 
@@ -400,7 +400,7 @@ def notify_admin(task_id):
 
 
 @app.route("/bind")
-@login_required
+@admin_required
 def setup_binding():
 
     # Your Account SID from twilio.com/console
@@ -435,7 +435,7 @@ def incoming_sms():
 def assign_task(user_id, task_id):
     user = load_user(user_id)
     task = Task.query.get(task_id)
-    user.tasks.append(task)
+    
     db.session.add(task)
     db.session.commit()
 

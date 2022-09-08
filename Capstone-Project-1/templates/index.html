@@ -9,7 +9,7 @@ Home
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary ">
         <div class="container-fluid">
             <a class="navbar-brand" href="/">Home</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarcollapser" 
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarcollapser"
                 aria-controls="navbarcollapser" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -18,11 +18,11 @@ Home
 
 
                     <a class="nav-item nav-link " href="/users">Users</a>
-                    
+
                     <a class="nav-item nav-link reg" href="{{url_for('show_all_user_tasks')}}">My Tasks</a>
-                    
+
                     <a class="nav-item nav-link" href="{{url_for('create_task')}}">Create Task</a>
-                    
+
                     <a class="nav-item nav-link admin" href="{{url_for('show_all_tasks')}}">Upcoming Tasks</a>
                     <a class="nav-item nav-link admin" href="#">Incompleted Tasks</a>
                     <a class="nav-item nav-link admin" href="#">Completed Tasks</a>
@@ -39,7 +39,11 @@ Home
             </div>
         </div>
     </nav>
-    <p >{{current_user}}  |  authenticated: {{current_user.is_authenticated}}   |  is_admin:{{current_user.is_admin}}</p> <form id="change-form" method="post" action="/change"><button class="btn btn-success" type="submit">Change</button></form>
+    <p class="d-inline">{{current_user}} | authenticated: {{current_user.is_authenticated}} |
+        is_admin:{{current_user.is_admin}}</p>
+    <form id="change-form" class="d-inline" method="post" action="/change"><button class="d-inline btn btn-success"
+            type="submit">Change</button></form>
+
     {%block content%}
     {%endblock%}
 {%endblock%}
