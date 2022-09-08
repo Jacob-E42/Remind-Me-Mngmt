@@ -36,8 +36,10 @@
                     </div>
                     <div class="row">
                         <div class="col">
-                            <button class="btn btn-success">Edit</button>
-                            <button class="btn btn-outline-danger">Detete</button>
+                            <form action="#" method="post"> 
+                                <button class="btn btn-success">Edit</button>
+                                <button formaction="{{url_for('delete_task', id=task.id)}}" class="btn btn-outline-danger">Delete</button>
+                            </form>
                         </div>
                     </div>
                 </form>

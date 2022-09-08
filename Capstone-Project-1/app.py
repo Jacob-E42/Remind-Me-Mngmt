@@ -156,7 +156,7 @@ def show_user_details(id):
 def show_all_user_tasks():
     user = User.query.get(4)
     tasks = user.tasks
-    
+
     return render_template("users/all_user_tasks.html", user=user, tasks=tasks)
 
 
@@ -165,17 +165,15 @@ def show_all_user_tasks():
 #     return "You didn't implement me yet!"
 
 
-@app.route("/users/<int:id>/edit", methods=["GET","POST", "PUT", "PATCH"])
+@app.route("/users/<int:id>/edit", methods=["GET", "POST", "PUT", "PATCH"])
 @admin_required
 def edit_user(id):
     user = load_user(id)
     form = EditUserForm(obj=user)
     if form.validate_on_submit():
-        data = {k:v for k,v in form.data.items() if k != "csrf_token"}
-        print(data)
-        for (k,v) in data.items():
+        data = {k: v for k, v in form.data.items() if k != "csrf_token"}
+        for (k, v) in data.items():
             setattr(user, k, v)
-        print(user)
         db.session.add(user)
         db.session.commit()
         flash("User updated!", "success")
@@ -184,27 +182,28 @@ def edit_user(id):
     return render_template("users/edit_user.html", form=form, user=user)
 
 
-@app.route("/users/<int:id>", methods=["POST","DELETE"])
+@app.route("/users/<int:id>", methods=["POST", "DELETE"])
 @admin_required
 def delete_user(id):
-    print("**************************", id)
     user = User.query.get_or_404(id)
     db.session.delete(user)
     db.session.commit()
     flash("User deleted!", "danger")
     return redirect(url_for('show_all_users'))
 
+
 @app.route("/users/<int:id>/assign", methods=["GET", "POST"])
 @admin_required
 def assign_task_to_user(id):
     form = AssignTaskForm()
     user = User.query.get(id)
-    assigned_task_ids = [task.id for task in user.tasks ]
+    assigned_task_ids = [task.id for task in user.tasks]
     form.task_id.choices = [(task.id, task.title) for task in Task.query.all()]
-    
+
     if form.validate_on_submit():
-        form_data = {k:v for k,v in form.data.items() if k != "csrf_token" and k != "task_id"}
-        data = {"assigner_id" : current_user.id, "assignee_id" : id, **form_data}
+        form_data = {k: v for k, v in form.data.items() if k !=
+                     "csrf_token" and k != "task_id"}
+        data = {"assigner_id": current_user.id, "assignee_id": id, **form_data}
         task_choices = form.task_id.data
 
         for task in task_choices:
@@ -215,7 +214,7 @@ def assign_task_to_user(id):
                 flash("Assignment Created!", "success")
         for task in assigned_task_ids:
             if task not in task_choices:
-                assignment = Assignment.query.filter_by(task_id = task).first()
+                assignment = Assignment.query.filter_by(task_id=task).first()
                 db.session.delete(assignment)
                 db.session.commit()
                 flash("Assignment deleted", "success")
@@ -223,11 +222,11 @@ def assign_task_to_user(id):
     return render_template("users/create_assignment.html", form=form, user=user)
 # ------------------------------------------------------------------------------------------------ Task routes
 
+
 @app.route("/create_task", methods=["GET", "POST"])
 @admin_required
 def create_task():
     form = CreateTaskForm()
-    print(form.due_time.data)
     if form.validate_on_submit():
 
         data = {k: v for k, v in form.data.items() if k != "csrf_token"}
@@ -238,11 +237,14 @@ def create_task():
         return redirect("/")
     return render_template("tasks/create_task.html", form=form)
 
+
 @app.route("/tasks", methods=["GET"])
+@admin_required
 def show_all_tasks():
     tasks = Task.query.order_by(Task.id).all()
     assignments = Assignment.query.all()
     return render_template("tasks/all_tasks.html", tasks=tasks, assignments=assignments)
+
 
 @app.route("/tasks/<int:id>", methods=["GET"])
 def show_task(id):
@@ -253,44 +255,55 @@ def show_task(id):
 def post_task(id):
     return "You didn't implement me yet!"
 
+
 @app.route("/tasks/<int:id>", methods=["PUT", "PATCH"])
+@admin_required
 def edit_task(id):
     task = Task.query.get_or_404(id)
     form = EditTaskForm(obj=task)
     return "You didn't implement me yet!"
 
 
-@app.route("/tasks/<int:id>", methods=["DELETE"])
+@app.route("/tasks/<int:id>/delete", methods=["POST", "DELETE"])
+@admin_required
 def delete_task(id):
-    return "You didn't implement me yet!"
+    task = Task.query.get_or_404(id)
+    db.session.delete(task)
+    db.session.commit()
+    flash("Task deleted!", "danger")
+    return redirect(url_for('show_all_tasks'))
 
 
-@app.route("/tasks/<int:id>/completed", methods=["POST","PUT", "PATCH"])
+@app.route("/tasks/<int:id>/completed", methods=["POST", "PUT", "PATCH"])
+@admin_required
 def edit_completed_status(id):
     task = Task.query.get_or_404(id)
     task.is_completed = not task.is_completed
     db.session.add(task)
     db.session.commit()
-    flash("Status changed","success")
+    flash("Status changed", "success")
     return redirect(url_for('show_all_tasks'))
 
 
 @app.route("/tasks/<int:id>/assignments", methods=["PUT", "PATCH"])
 def edit_assignment(id):
-    
+
     return "You didn't implement me yet!"
+
 
 @app.route("/tasks/<int:id>/assign", methods=["GET", "POST"])
 @admin_required
 def assign_user_to_task(id):
     form = AssignUserForm()
     task = Task.query.get(id)
-    assigned_user_ids = [user.id for user in task.users ]
-    form.assignee_id.choices = [(u.id, u.first_name + " " + u.last_name) for u in User.query.all()]
-    
+    assigned_user_ids = [user.id for user in task.users]
+    form.assignee_id.choices = [
+        (u.id, u.first_name + " " + u.last_name) for u in User.query.all()]
+
     if form.validate_on_submit():
-        form_data = {k:v for k,v in form.data.items() if k != "csrf_token" and k != "assignee_id"}
-        data = {"assigner_id" : current_user.id, "task_id" : id, **form_data}
+        form_data = {k: v for k, v in form.data.items(
+        ) if k != "csrf_token" and k != "assignee_id"}
+        data = {"assigner_id": current_user.id, "task_id": id, **form_data}
         assignee_choices = form.assignee_id.data
 
         for assignee in assignee_choices:
@@ -301,19 +314,20 @@ def assign_user_to_task(id):
                 flash("Assignment Created!", "success")
         for assignee in assigned_user_ids:
             if assignee not in assignee_choices:
-                assignment = Assignment.query.filter_by(assignee_id = assignee, task_id=task.id).first()
+                assignment = Assignment.query.filter_by(
+                    assignee_id=assignee, task_id=task.id).first()
                 db.session.delete(assignment)
                 db.session.commit()
                 flash("Assignment deleted", "success")
         return redirect(url_for('show_all_tasks'))
     return render_template("tasks/create_assignment.html", form=form, task=task)
 
+
 @app.route("/tasks/<int:id>/assign", methods=["DELETE"])
 @admin_required
 def remove_user_from_task(id):
     task = Task.query.get_or_404(id)
     return "deleted"
-
 
 
 @app.route("/tasks/upcoming", methods=["GET"])

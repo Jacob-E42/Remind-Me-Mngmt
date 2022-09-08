@@ -108,7 +108,7 @@ class Task(db.Model):
 
     
     users = db.relationship("User", secondary="assignments", backref="tasks")
-    assignments = db.relationship("Assignment", back_populates="task")
+    assignments = db.relationship("Assignment", back_populates="task", cascade="all, delete")
 
     def __repr__(self):
         
