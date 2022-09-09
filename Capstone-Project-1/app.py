@@ -40,7 +40,7 @@ login_manager.needs_refresh_message_category = "danger"
 
 
 USER = current_user
-BASE_URL = "https://api.txtlocal.com/send/"
+# BASE_URL = "https://api.txtlocal.com/send/"
 
 
 @app.route('/')
