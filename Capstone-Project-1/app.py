@@ -17,7 +17,10 @@ from twilio.rest import Client
 # -------------------------------------------------------------------------------- Setup and Configurations
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///organizations_db'
+uri = os.environ.get("DATABASE_URL", 'postgresql:///organizaions_db')  
+if uri.startswith("postgres://"):
+    uri = uri.replace("postgres://", "postgresql://")
+app.config['SQLALCHEMY_DATABASE_URI'] = uri
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = False
 app.config['SECRET_KEY'] = SECRET_KEY
