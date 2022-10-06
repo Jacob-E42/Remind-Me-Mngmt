@@ -17,7 +17,7 @@ from twilio.rest import Client
 # -------------------------------------------------------------------------------- Setup and Configurations
 
 app = Flask(__name__)
-uri = os.environ.get("DATABASE_URL", 'postgresql:///organizaions_db')  
+uri = os.environ.get("DATABASE_URL", 'postgresql:///organizations_db')  
 if uri.startswith("postgres://"):
     uri = uri.replace("postgres://", "postgresql://")
 app.config['SQLALCHEMY_DATABASE_URI'] = uri
@@ -42,9 +42,64 @@ login_manager.needs_refresh_message = (
 login_manager.needs_refresh_message_category = "danger"
 
 
+@app.route('/')
+def show_homepage():
+
+    return render_template("home.html", current_user=current_user)
+
+# -------------------------------------------------------------------------------------- User-login Routes
 
 
+@app.route("/login", methods=["GET", "POST"])
+def login():
 
+    form = LoginForm()
+
+    if form.validate_on_submit():
+        (user, msg) = User.authenticate(form.username.data, form.password.data)
+        if user:
+            delta = timedelta(days=30)
+            login_user(user, remember=True, duration=delta)
+            flash(msg, "success")
+            next = request.args.get('next')
+
+            # is_safe_url should check if the url is safe for redirects.
+            # See http://flask.pocoo.org/snippets/62/ for an example.
+            if not is_safe_url(next):
+                return abort(400)
+            return redirect(next or url_for('show_homepage'))
+        else:
+            flash(msg, "danger")
+
+    return render_template("login/login.html", form=form)
+
+
+@app.route("/signup", methods=['GET', 'POST'])
+def signup():
+    form = SignupForm()
+
+    if form.validate_on_submit():
+        data = {k: v for k, v in form.data.items(
+        ) if k != "password" and k != "csrf_token"}
+        new_user = User.register(form.password.data, data)
+        db.session.add(new_user)
+        db.session.commit()
+
+        delta = timedelta(days=30)
+        login_user(new_user, remember=True, duration=delta)
+        flash('Signed up successfully!', "success")
+        url = url_for('show_homepage')
+        return redirect(url)
+    else:
+        return render_template("login/signup.html", form=form)
+
+
+@app.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    flash("Logged out", "info")
+    return redirect(f"{url_for('show_homepage')}")
 # ------------------------------------------------------------------------------------------ User login functions
 
 
