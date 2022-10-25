@@ -1,23 +1,29 @@
-{% extends 'index.html' %}
+{% extends 'index.html' %} {%block content%}
+<p class="text-center display-3">All Users</p>
+<section>
+    <ul>
+        {%for user in users%}
+        <div class="card container">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <a href="{{ url_for('show_user_details', id=user.id) }}" class="text-dark text-decoration-none"
+                        >{{user.first_name}} {{user.last_name}}</a
+                    >
+                </h5>
 
-{%block content%}
-    <p class="text-center display-3">All Users</p>
-    <section>
-        <ul>
-            {%for user in users%}  
-                <div class="card container">
-                    <div class="card-body">
-                        <h5 class="card-title"><a href="{{ url_for('show_user_details', id=user.id) }}" class="text-dark text-decoration-none">{{user.first_name}} {{user.last_name}}</a></h5>
-                        
-                            <a href="{{url_for('assign_task_to_user', id=user.id)}}" class="btn btn-primary submit">Assign Task</a> 
-                            <a href="{{url_for('edit_user', id=user.id)}}" class="btn btn-secondary">Edit</a>
-                            <form action="#" method="post" class="d-inline-block"><button formaction="{{url_for('delete_user', id=user.id)}}" class="btn btn-danger">Delete</button>
-                            </form>
-                            
-                        
-                    </div>
-                </div>
-            {%endfor%}
-        </ul>
-    </section>
+                <a href="{{url_for('assign_task_to_user', id=user.id)}}" class="btn btn-primary submit">Assign Task</a>
+                <a href="{{url_for('edit_user', id=user.id)}}" class="btn btn-secondary">Edit</a>
+                <form action="#" method="post" class="d-inline-block">
+                    <button formaction="{{url_for('remind_users', user_ids=user.id)}}" class="btn btn-warning">
+                        Remind
+                    </button>
+                </form>
+                <form action="#" method="post" class="d-inline-block">
+                    <button formaction="{{url_for('delete_user', id=user.id)}}" class="btn btn-danger">Delete</button>
+                </form>
+            </div>
+        </div>
+        {%endfor%}
+    </ul>
+</section>
 {%endblock%}

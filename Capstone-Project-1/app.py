@@ -20,11 +20,14 @@ app = Flask(__name__)
 uri = os.environ.get("DATABASE_URL", 'postgresql:///organizations_db')  
 if uri.startswith("postgres://"):
     uri = uri.replace("postgres://", "postgresql://")
+
 app.config['SQLALCHEMY_DATABASE_URI'] = uri
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = False
 app.config['SECRET_KEY'] = SECRET_KEY
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
+app.config['DEBUG'] = True
+
 debug = DebugToolbarExtension(app)
 
 # connects db and creates all tables on the db server
@@ -154,7 +157,7 @@ def show_user_details(id):
 @app.route("/users/my_tasks", methods=["GET"])
 @login_required
 def show_all_user_tasks():
-    user = User.query.get(4)
+    user = User.query.get(current_user.id)
     tasks = user.tasks
 
     return render_template("users/all_user_tasks.html", user=user, tasks=tasks)
@@ -358,21 +361,10 @@ def show_completed_tasks():
 
 @app.route("/remind", methods=["POST", "GET"])
 @admin_required
-def send_sms():
+def remind():
 
-    # Your Account SID from twilio.com/console
-    account_sid = ACCOUNT_SID
-    # Your Auth Token from twilio.com/console
-    auth_token = AUTH_TOKEN
-
-    client = Client(account_sid, auth_token)
-    notification = client.notify.services(SERVICE_SID) \
-        .notifications.create(
-        # We recommend using a GUID or other anonymized identifier for Identity
-        identity='00000002',
-        body='Knok-Knok! You have gotten your first test')
-    print(notification.sid)
-    return render_template("test.html", display=notification.sid)
+    
+    return "null"
 
 
 @app.route("/remind/daily", methods=["POST", "GET"])
@@ -384,13 +376,17 @@ def send_daily_reminder():
 @app.route("/remind/<task_ids>", methods=["POST", "GET"])
 @admin_required
 def remind_about_tasks(task_ids):
-    return "You didn't implement me yet!"
+    return "You didn't implement the number 7"
 
 
 @app.route("/remind/<user_ids>", methods=["POST", "GET"])
 @admin_required
 def remind_users(user_ids):
-    return "You didn't implement me yet!"
+    for id in user_ids:
+        user = User.query.get(id)
+        body = generate_body(id, "user")
+        reminder = send_sms(user.phone, body)
+    return "You sent a reminder!"
 
 
 @app.route("/notify/<int:task_id>", methods=["POST", "GET"])
@@ -428,6 +424,33 @@ def incoming_sms():
     message_status = request.values.get('MessageStatus', None)
     logging.info('SID: {}, Status: {}'.format(message_sid, message_status))
     return ('', 204)
+
+def send_sms(recipient, msg):
+    # Your Account SID from twilio.com/console
+    account_sid = ACCOUNT_SID
+    # Your Auth Token from twilio.com/console
+    auth_token  = AUTH_TOKEN
+
+    client = Client(account_sid, auth_token)
+
+    message = client.messages.create(
+        to=f"{recipient}", 
+        from_="+15706309413",
+        status_callback="https://en3ubmjwpivr1.x.pipedream.net",
+        body=f"{msg}")
+
+    return message.sid
+
+def generate_body(id, type):
+    if type == "user":
+        
+        user = User.query.get(id)
+        msg = f"Hi {user.first_name} {user.last_name}, here are your upcoming tasks:\n"
+        user_tasks = user.tasks
+        for task in user_tasks:
+            string = f"The task {task.title} is due by {task.due_time}"
+            msg += string
+        return msg
 
 
 # ------------------------------------------------------------------------ For debugging, to be deleted later
