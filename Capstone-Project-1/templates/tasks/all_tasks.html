@@ -32,7 +32,7 @@
                                 class="btn btn-primary">Mark complete</button>
                             <button class="btn btn-info" formaction="{{url_for('assign_user_to_task', id=task.id)}}"
                                 formmethod="get">Reassign</button>
-                            <button class="btn btn-warning">Remind</button>
+                            <button class="btn btn-warning" formaction="{{url_for('remind_for_task', task_id=task.id)}}" formmethod="post">Remind</button>
 
                         </div>
                     </div>

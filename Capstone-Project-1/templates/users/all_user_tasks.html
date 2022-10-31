@@ -1,12 +1,8 @@
-{% extends 'index.html' %}
-
-
-{%block content%}
+{% extends 'index.html' %} {%block content%}
 <h1 class="display-2 text-center">My Tasks</h1>
 
 <div class="container">
     <ul>
-
         {% for task in tasks %}
 
         <li class="card">
@@ -21,30 +17,40 @@
                     </h4>
                 </div>
                 <form class="card-text" action="#" method="post">
-
                     <div class="row">
                         <div class="col">
-
-                            <button formaction="{{url_for('edit_completed_status', id=task.id)}}"
-                                class="btn btn-primary">Mark complete</button>
-                            <button class="btn btn-info" formaction="{{url_for('assign_user_to_task', id=task.id)}}"
-                                formmethod="get">Reassign</button>
-                            <button class="btn btn-warning">Remind</button>
-
+                            <button
+                                formaction="{{url_for('edit_completed_status', id=task.id)}}"
+                                class="btn btn-primary"
+                            >
+                                Mark complete
+                            </button>
+                            <button
+                                class="btn btn-info"
+                                formaction="{{url_for('assign_user_to_task', id=task.id)}}"
+                                formmethod="get"
+                            >
+                                Reassign
+                            </button>
+                            <button
+                                class="btn btn-warning"
+                                formaction="{{url_for('remind_for_task', task_id=task.id)}}"
+                                formmethod="post"
+                            >
+                                Remind
+                            </button>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col">
-
                             <button class="btn btn-success">Edit</button>
-                            <button formaction="{{url_for('delete_task', id=task.id)}}"
-                                class="btn btn-outline-danger">Detete</button>
+                            <button formaction="{{url_for('delete_task', id=task.id)}}" class="btn btn-outline-danger">
+                                Detete
+                            </button>
                         </div>
-
                     </div>
                 </form>
             </div>
-
         </li>
         {%endfor%}
     </ul>

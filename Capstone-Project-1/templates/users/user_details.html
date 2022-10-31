@@ -1,24 +1,28 @@
-{% extends 'index.html' %}
-
-{%block content%}
+{% extends 'index.html' %} {%block content%}
 <div class="container">
     <div class="card">
         <div class="card-body">
-            <h5 class="card-title"><a href="#" class="text-dark text-decoration-none">{{user.first_name}}
-                    {{user.last_name}}</a></h5>
-            <p class="card-text">{{user.username}} {{user.phone}} {{user.email}} {% if user.is_admin %} - Admin
-                {%endif%}</p>
+            <h5 class="card-title">
+                <a href="#" class="text-dark text-decoration-none">{{user.first_name}} {{user.last_name}}</a>
+            </h5>
+            <p class="card-text">
+                {{user.username}} {{user.phone}} {{user.email}} {% if user.is_admin %} - Admin {%endif%}
+            </p>
             <a class="btn btn-primary" href="{{url_for('assign_task_to_user', id=user.id)}}">Assign Task</a>
             <a href="{{url_for('edit_user', id=user.id)}}" class="btn btn-secondary">Edit</a>
-            <form action="#" method="post" class="d-inline-block"><button formaction="{{url_for('remind_users', user_ids=user.id)}}" class="btn btn-warning">Remind</button></form>
-            <form action="{{url_for('edit_user', id=user.id)}}" method="post" class="d-inline-block"><button
-                    class="btn btn-danger ">Delete</button></form>
+            <form action="#" method="post" class="d-inline-block">
+                <button formaction="{{url_for('remind_users', user_id=user.id)}}" class="btn btn-warning">
+                    Remind
+                </button>
+            </form>
+            <form action="{{url_for('edit_user', id=user.id)}}" method="post" class="d-inline-block">
+                <button class="btn btn-danger">Delete</button>
+            </form>
         </div>
     </div>
 </div>
 <div class="container">
     <ul>
-
         {% for task in tasks %}
 
         <li class="card">
@@ -33,56 +37,62 @@
                     </h4>
                 </div>
                 <form class="card-text" action="#" method="post">
-
                     <div class="row">
                         <div class="col">
-                            <form>
-                                <button formaction="{{url_for('edit_completed_status', id=task.id)}}"
-                                    class="btn btn-primary">Mark complete</button>
-                                <button class="btn btn-info" formaction="{{url_for('assign_user_to_task', id=task.id)}}"
-                                    formmethod="get">Reassign</button>
-                                <button class="btn btn-warning">Remind</button>
+                            <button
+                                formaction="{{url_for('edit_completed_status', id=task.id)}}"
+                                class="btn btn-primary"
+                            >
+                                Mark complete
+                            </button>
+                            <button
+                                class="btn btn-info"
+                                formaction="{{url_for('assign_user_to_task', id=task.id)}}"
+                                formmethod="get"
+                            >
+                                Reassign
+                            </button>
+                            <button
+                                class="btn btn-warning"
+                                formaction="{{url_for('remind_for_task', task_id=task.id)}}"
+                            >
+                                Remind
+                            </button>
                         </div>
-
                     </div>
                     <div class="row">
                         <div class="col">
-
                             <a href="#" class="btn btn-success">Edit</a>
-                            <button href="#" formaction="{{url_for('delete_task', id=task.id)}}"
-                                class="btn btn-outline-danger">Delete</button>
-
+                            <button
+                                href="#"
+                                formaction="{{url_for('delete_task', id=task.id)}}"
+                                class="btn btn-outline-danger"
+                            >
+                                Delete
+                            </button>
                         </div>
                     </div>
                 </form>
             </div>
-
         </li>
         {%endfor%}
     </ul>
 </div>
 <div class="container">
     <h5 class="">Upcoming Tasks</h5>
-    <hr>
-    <div>
-
-    </div>
+    <hr />
+    <div></div>
 </div>
 <div class="container">
     <h5 class="">Incomplete Tasks</h5>
-    <hr>
-    <div>
-
-    </div>
+    <hr />
+    <div></div>
 </div>
 
 <button class="btn btn-primary d-inline-block">Show Completed Tasks</button>
 <div class="container d-none">
-
     <h5 class="">Completed Tasks</h5>
-    <hr>
-    <div>
-
-    </div>
+    <hr />
+    <div></div>
 </div>
 {%endblock%}

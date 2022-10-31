@@ -359,13 +359,6 @@ def show_completed_tasks():
 # ------------------------------------------------------------------------------------------------------ Reminder routes
 
 
-@app.route("/remind", methods=["POST", "GET"])
-@admin_required
-def remind():
-
-    
-    return "null"
-
 
 @app.route("/remind/daily", methods=["POST", "GET"])
 @admin_required
@@ -373,26 +366,43 @@ def send_daily_reminder():
     return "You didn't implement me yet!"
 
 
-@app.route("/remind/<task_ids>", methods=["POST", "GET"])
+@app.route("/remind/task/<int:task_id>", methods=["POST", "GET"])
 @admin_required
-def remind_about_tasks(task_ids):
-    return "You didn't implement the number 7"
+def remind_for_task(task_id):
+    task = Task.query.get(task_id)
 
+    assigned_users = task.users
 
-@app.route("/remind/<user_ids>", methods=["POST", "GET"])
-@admin_required
-def remind_users(user_ids):
-    for id in user_ids:
-        user = User.query.get(id)
-        body = generate_body(id, "user")
+    for user in assigned_users:
+        
+        body = generate_body(user, "task", task)
+        
         reminder = send_sms(user.phone, body)
+        
+    
+    return "You sent a reminder about a task!"
+
+
+@app.route("/remind/user/<int:user_id>", methods=["POST", "GET"])
+@admin_required
+def remind_users(user_id):
+    
+    user = User.query.get(user_id)
+    body = generate_body(user, "user")
+    
+    reminder = send_sms(user.phone, body)
+    
     return "You sent a reminder!"
 
 
 @app.route("/notify/<int:task_id>", methods=["POST", "GET"])
 @admin_required
 def notify_admin(task_id):
-    return "You didn't implement me yet!"
+    task = Task.query.get_or_404(task_id)
+    admin= User.query.get_or_404(task.created_by)
+    body = generate_body(admin, "notify", task)
+    reminder = send_sms(admin.phone, body)
+    return "You sent a notification!"
 
 
 @app.route("/bind")
@@ -441,16 +451,24 @@ def send_sms(recipient, msg):
 
     return message.sid
 
-def generate_body(id, type):
+def generate_body(user, type, task=None):
     if type == "user":
         
-        user = User.query.get(id)
+        
         msg = f"Hi {user.first_name} {user.last_name}, here are your upcoming tasks:\n"
         user_tasks = user.tasks
         for task in user_tasks:
             string = f"The task {task.title} is due by {task.due_time}"
             msg += string
         return msg
+    elif type == "task":
+        
+        msg = f"Hi {user.first_name} {user.last_name}, the task {task.title} is due by {task.due_time}."
+        return msg
+    elif type == "notify":
+        msg = f"Hi {user.first_name} {user.last_name}, \n the task {task.title} has been completed."
+        return msg
+
 
 
 # ------------------------------------------------------------------------ For debugging, to be deleted later
