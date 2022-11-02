@@ -1,17 +1,11 @@
 from app import app
 from routes.login import admin_required
-from models import db, connect_db, User, Assignment, Task
-from forms import LoginForm, SignupForm, CreateTaskForm, EditUserForm, EditTaskForm, AssignUserForm, AssignTaskForm
-from secret import ACCOUNT_SID, TEST_AUTH_TOKEN, AUTH_TOKEN, SERVICE_SID, SECRET_KEY
+from models import db, Task
+from forms import CreateTaskForm, EditTaskForm, AssignTaskForm
 from flask import Flask, request, redirect, render_template, session, flash, url_for, abort
-from flask_login import LoginManager, current_user, login_required, login_user, logout_user, UserMixin
-from functools import wraps
-from flask_debugtoolbar import DebugToolbarExtension
-from datetime import timedelta
-import requests
-from urllib.parse import urlparse, urljoin
-from twilio.rest import Client
-import os
+
+
+
 # ------------------------------------------------------------------------------------------------ Task routes
 
 
