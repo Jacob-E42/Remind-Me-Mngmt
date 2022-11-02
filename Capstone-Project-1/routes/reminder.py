@@ -1,5 +1,5 @@
 from app import app
-from login import admin_required
+from routes.login import admin_required
 from models import db, connect_db, User, Assignment, Task
 from forms import LoginForm, SignupForm, CreateTaskForm, EditUserForm, EditTaskForm, AssignUserForm, AssignTaskForm
 from secret import ACCOUNT_SID, TEST_AUTH_TOKEN, AUTH_TOKEN, SERVICE_SID, SECRET_KEY
@@ -19,29 +19,27 @@ import os
 @app.route("/remind/daily", methods=["POST", "GET"])
 @admin_required
 def send_daily_reminder():
-    return "You didn't implement me yet!"
+    all_users = User.query.all()
+    for user in all_users:
+        remind_user(user.id)
+    return "You just reminded everyone!"
 
 
 @app.route("/remind/task/<int:task_id>", methods=["POST", "GET"])
 @admin_required
 def remind_for_task(task_id):
     task = Task.query.get(task_id)
-
     assigned_users = task.users
 
     for user in assigned_users:
-        
         body = generate_body(user, "task", task)
-        
         reminder = send_sms(user.phone, body)
-        
-    
     return "You sent a reminder about a task!"
 
 
-@app.route("/remind/user/<int:user_id>", methods=["POST", "GET"])
+@app.route("/remind/user/<user_id>", methods=["POST", "GET"])
 @admin_required
-def remind_users(user_id):
+def remind_user(user_id):
     
     user = User.query.get(user_id)
     body = generate_body(user, "user")
@@ -80,12 +78,10 @@ def send_sms(recipient, msg):
 
 def generate_body(user, type, task=None):
     if type == "user":
-        
-        
         msg = f"Hi {user.first_name} {user.last_name}, here are your upcoming tasks:\n"
         user_tasks = user.tasks
         for task in user_tasks:
-            string = f"The task {task.title} is due by {task.due_time}"
+            string = f"The task {task.title} is due by {task.due_time}\n"
             msg += string
         return msg
     elif type == "task":

@@ -20,7 +20,8 @@ import os
 
 app = Flask(__name__)
 
-from routes import login, user, task, reminder, helpers
+from routes import login, user, task, helpers
+
 uri = os.environ.get("DATABASE_URL", 'postgresql:///organizations_db')  
 if uri.startswith("postgres://"):
     uri = uri.replace("postgres://", "postgresql://")
@@ -43,5 +44,5 @@ db.create_all()
 
 @app.route('/')
 def show_homepage():
-    print("i am a test dummy")
+  
     return render_template("home.html")

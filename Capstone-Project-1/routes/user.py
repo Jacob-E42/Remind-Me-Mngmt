@@ -1,7 +1,8 @@
 from app import app
-from routes import login 
 
-from login import admin_required
+
+from routes.login import admin_required
+from routes.reminder import remind_user
 from models import db, connect_db, User, Assignment, Task
 from forms import LoginForm, SignupForm, CreateTaskForm, EditUserForm, EditTaskForm, AssignUserForm, AssignTaskForm
 from secret import ACCOUNT_SID, TEST_AUTH_TOKEN, AUTH_TOKEN, SERVICE_SID, SECRET_KEY

@@ -11,7 +11,7 @@ import requests
 from urllib.parse import urlparse, urljoin
 from twilio.rest import Client
 import os
-from templates import login, tasks, users
+
 
 
 # -------------------------------------------------------------------------------------- User-login Routes
