@@ -1,5 +1,8 @@
 {% extends 'index.html' %} {%block content%}
 <p class="text-center display-3">All Users</p>
+<form class="d-center" action="{{url_for('create_user')}}" method="post">
+    <button class="btn btn-secondary">Create User</button>
+</form>
 <section>
     <ul>
         {%for user in users%}
