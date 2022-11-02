@@ -47,6 +47,7 @@ class User(db.Model, UserMixin):
 
         # turn bytestring into normal (unicode utf8) string
         hashed_utf8 = hashed.decode("utf8")
+       
         new_user = cls(password=hashed_utf8, **data)
 
         if new_user:

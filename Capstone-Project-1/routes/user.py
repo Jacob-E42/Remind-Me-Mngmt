@@ -2,7 +2,7 @@ from app import app
 from routes.login import admin_required
 from routes.reminder import remind_user
 from models import db, User
-from forms import  EditUserForm,  AssignUserForm
+from forms import  EditUserForm, AssignUserForm, CreateUserForm
 from flask import Flask, request, redirect, render_template, session, flash, url_for, abort
 from flask_login import login_required, current_user
 
@@ -37,9 +37,24 @@ def show_all_user_tasks():
     return render_template("users/all_user_tasks.html", user=user, tasks=tasks)
 
 
-# @app.route("/users/<int:id>", methods=["POST"])
-# def create_user(id):
-#     return "You didn't implement me yet!"
+@app.route("/users/create", methods=["POST", "GET"])
+@admin_required
+def create_user():
+    form = CreateUserForm()
+
+    if form.validate_on_submit():
+        data = {k: v for k, v in form.data.items(
+        ) if k != "password" and k != "csrf_token"}
+        new_user = User.register(form.password.data or "123456", data)
+        db.session.add(new_user)
+        db.session.commit()
+
+        flash('Created New User!', "success")
+        return redirect(url_for('show_homepage'))
+    else:
+        
+        return render_template("users/create_user.html", form=form)
+    
 
 
 @app.route("/users/<int:id>/edit", methods=["GET", "POST", "PUT", "PATCH"])

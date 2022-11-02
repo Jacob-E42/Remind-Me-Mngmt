@@ -19,6 +19,15 @@ class SignupForm(FlaskForm):
   email = EmailField("Email", validators=[DataRequired(message="Email is required"), Email()])
   phone = StringField("Phone Number", validators=[DataRequired(message="Phone number is required"), Length(min=10, max=12, message="Phone number should be entered as plain digits with no other characters")])
     
+class CreateUserForm(FlaskForm):
+
+  first_name = StringField("First Name", validators=[DataRequired(message="First name is required")])
+  last_name = StringField("Last Name", validators=[DataRequired(message="Last name is required")])
+  username = StringField("Username", validators=[DataRequired(message="Username is required"), Length(min=3, max=100, message="Username must be at least 3 characters long")])
+  password = PasswordField("Password", validators=[Optional(), Length(min=6, max=50, message="Password length must be between 6 and 50 characters")])
+  email = EmailField("Email", validators=[DataRequired(message="Email is required"), Email()])
+  phone = StringField("Phone Number", validators=[DataRequired(message="Phone number is required"), Length(min=10, max=12, message="Phone number should be entered as plain digits with no other characters")])
+
 class EditUserForm(FlaskForm):
   first_name = StringField("First Name", validators=[DataRequired(message="First name is required")])
   last_name = StringField("Last Name", validators=[DataRequired(message="Last name is required")])
