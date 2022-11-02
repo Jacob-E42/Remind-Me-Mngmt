@@ -46,9 +46,9 @@ def assign_task(user_id, task_id):
     db.session.commit()
 
 
-@app.route("/change", methods=["POST", "GET"])
-def change_admin_status():
-    current_user.change_admin()
-    db.session.commit()
-    flash("Admin status changed", "success")
-    return redirect("/")
+# @app.route("/change", methods=["POST", "GET"])
+# def change_admin_status():
+#     current_user.change_admin()
+#     db.session.commit()
+#     flash("Admin status changed", "success")
+#     return redirect("/")

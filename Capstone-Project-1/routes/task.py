@@ -1,6 +1,6 @@
 from app import app
 from routes.login import admin_required
-from models import db, Task
+from models import db, Task, Assignment
 from forms import CreateTaskForm, EditTaskForm, AssignTaskForm
 from flask import Flask, request, redirect, render_template, session, flash, url_for, abort
 

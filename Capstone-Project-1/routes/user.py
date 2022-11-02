@@ -4,6 +4,7 @@ from routes.reminder import remind_user
 from models import db, User
 from forms import  EditUserForm,  AssignUserForm
 from flask import Flask, request, redirect, render_template, session, flash, url_for, abort
+from flask_login import login_required, current_user
 
 
 
@@ -96,3 +97,11 @@ def assign_task_to_user(id):
                 flash("Assignment deleted", "success")
         return redirect(url_for('show_all_tasks'))
     return render_template("users/create_assignment.html", form=form, user=user)
+
+@app.route("/users/change", methods=["POST", "GET"])
+def change_admin_status():
+    
+    current_user.change_admin()
+    db.session.commit()
+    flash("Admin status changed", "success")
+    return redirect("/")
