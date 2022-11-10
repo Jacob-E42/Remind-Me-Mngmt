@@ -17,7 +17,9 @@
             <div class="navbar-nav">
                 <a class="nav-item nav-link" href="/users">Users</a>
 
-                <a class="nav-item nav-link reg" href="{{url_for('show_all_user_tasks')}}">My Tasks</a>
+                <a class="nav-item nav-link reg" href="{{url_for('show_user_details', id=current_user.id)}}"
+                    >My Tasks</a
+                >
 
                 <a class="nav-item nav-link" href="{{url_for('create_task')}}">Create Task</a>
 

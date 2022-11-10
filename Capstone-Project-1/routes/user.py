@@ -1,8 +1,8 @@
 from app import app
-from routes.login import admin_required
+from routes.login import admin_required, load_user
 from routes.reminder import remind_user
-from models import db, User
-from forms import  EditUserForm, AssignUserForm, CreateUserForm
+from models import db, User, Task, Assignment
+from forms import  EditUserForm, AssignUserForm, CreateUserForm, AssignTaskForm
 from flask import Flask, request, redirect, render_template, session, flash, url_for, abort
 from flask_login import login_required, current_user
 
@@ -27,17 +27,17 @@ def show_user_details(id):
 
     return render_template("users/user_details.html", user=user, tasks=tasks)
 
+#deprecated
+# @app.route("/users/my_tasks", methods=["GET"])
+# @login_required
+# def show_all_user_tasks():
+#     user = User.query.get(current_user.id)
+#     tasks = user.tasks
 
-@app.route("/users/my_tasks", methods=["GET"])
-@login_required
-def show_all_user_tasks():
-    user = User.query.get(current_user.id)
-    tasks = user.tasks
-
-    return render_template("users/all_user_tasks.html", user=user, tasks=tasks)
+#     return render_template("users/all_user_tasks.html", user=user, tasks=tasks)
 
 
-@app.route("/users/create", methods=["POST", "GET"])
+@app.route("/users", methods=["POST", "GET"])
 @admin_required
 def create_user():
     form = CreateUserForm()

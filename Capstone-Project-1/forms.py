@@ -33,7 +33,7 @@ class EditUserForm(FlaskForm):
   last_name = StringField("Last Name", validators=[DataRequired(message="Last name is required")])
   username = StringField("Username", validators=[DataRequired(message="Username is required"), Length(min=3, max=100, message="Username must be at least 3 characters long")])
   email = EmailField("Email", validators=[DataRequired(message="Email is required"), Email()])
-  phone = StringField("Phone Number", validators=[DataRequired(message="Phone number is required"), Length(min=10, max=10, message="Phone number should be entered as plain digits with no other characters")])
+  phone = StringField("Phone Number", validators=[DataRequired(message="Phone number is required"), Length(min=10, max=12, message="Phone number should be entered as plain digits with no other characters")])
     
 
 

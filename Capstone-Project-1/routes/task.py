@@ -1,6 +1,6 @@
 from app import app
 from routes.login import admin_required
-from models import db, Task, Assignment
+from models import db, Task, Assignment, User
 from forms import CreateTaskForm, EditTaskForm, AssignTaskForm
 from flask import Flask, request, redirect, render_template, session, flash, url_for, abort
 
@@ -9,7 +9,7 @@ from flask import Flask, request, redirect, render_template, session, flash, url
 # ------------------------------------------------------------------------------------------------ Task routes
 
 
-@app.route("/create_task", methods=["GET", "POST"])
+@app.route("/tasks/create", methods=["GET", "POST"])
 @admin_required
 def create_task():
     form = CreateTaskForm()
@@ -26,7 +26,7 @@ def create_task():
     return render_template("tasks/create_task.html", form=form)
 
 
-@app.route("/tasks", methods=["GET"])
+@app.route("/tasks/all", methods=["GET"])
 @admin_required
 def show_all_tasks():
     tasks = Task.query.order_by(Task.id).all()
