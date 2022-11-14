@@ -13,7 +13,7 @@ Assignment.query.delete()
 john = User(first_name="John", last_name="Test", username="myself", password="testPwd11", email="johntest@email.com", phone="5162347644", is_admin=True)
 emily = User(first_name="Emily", last_name="Test", username="myselfish", password="testPwd11", email="emilytest@email.com", phone="5162347645")
 frank = User(first_name="Frank", last_name="Test", username="myselfy", password="testPwd11", email="franktest@email.com", phone="5162347646")
-
+# jacob = User(first_name="Jacob", last_name="Eiferman", username="JacobAdmin", password="123456", email="yaakoveiferman@gmail.com", phone="5164506401")
 
 
 db.session.add_all([john, emily, frank])

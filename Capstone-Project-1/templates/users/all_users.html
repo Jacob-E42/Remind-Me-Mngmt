@@ -6,7 +6,7 @@
 <section>
 	<ul>
 		{%for user in users%}
-		<span class="d-none" id="user_id">{{user.id}}</span>
+
 		<li>
 			<a href="{{ url_for('show_user_details', id=user.id) }}">
 				<div class="card container">
@@ -23,7 +23,7 @@
 							<button formaction="{{url_for('remind_user', user_id=user.id)}}" class="btn btn-warning">Remind</button>
 						</form>
 
-						<button class="btn btn-danger d-inline-block delete-button">Delete</button>
+						<button class="btn btn-danger d-inline-block delete-button" data-user-id="{{user.id}}">Delete</button>
 					</div>
 				</div>
 			</a>

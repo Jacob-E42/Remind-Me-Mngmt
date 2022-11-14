@@ -27,7 +27,7 @@ class User(db.Model, UserMixin):
     username = db.Column(db.Text, nullable=False, unique=True)
     password = db.Column(db.Text, nullable=False)
     email  = db.Column(db.Text, nullable=False, unique=True)
-    phone = db.Column(db.Text, nullable=False, unique=True)
+    phone = db.Column(db.Text, nullable=False)
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     is_admin = db.Column(db.Boolean, nullable=False, default=False)
 
@@ -80,8 +80,8 @@ class Assignment(db.Model):
 
     # id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     assigner_id = db.Column(db.Integer, nullable=False)
-    assignee_id = db.Column(db.Integer,  db.ForeignKey("users.id"), primary_key=True, nullable=False)
-    task_id = db.Column(db.Integer, db.ForeignKey("tasks.id"), primary_key=True, nullable=False)
+    assignee_id = db.Column(db.Integer,  db.ForeignKey("users.id", ondelete="CASCADE"), primary_key=True, nullable=False)
+    task_id = db.Column(db.Integer, db.ForeignKey("tasks.id", ondelete="CASCADE"), primary_key=True, nullable=False)
     remind_daily = db.Column(db.Boolean, nullable=False, default=True)
     notify_admin = db.Column(db.Boolean, nullable=False, default=True)
 
@@ -103,13 +103,13 @@ class Task(db.Model):
     title = db.Column(db.String(180), nullable=False)
     description = db.Column(db.Text)
     due_time  = db.Column(db.DateTime, nullable=False)
-    created_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False )
+    created_by = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="CASCADE"), nullable=False )
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     time_completed = db.Column(db.DateTime, server_onupdate=db.func.now())
 
     
-    users = db.relationship("User", secondary="assignments", backref="tasks")
-    assignments = db.relationship("Assignment", back_populates="task", cascade="all, delete")
+    users = db.relationship("User", secondary="assignments", backref="tasks", cascade="all,delete")
+    assignments = db.relationship("Assignment", back_populates="task", cascade="all,delete")
 
     def __repr__(self):
         

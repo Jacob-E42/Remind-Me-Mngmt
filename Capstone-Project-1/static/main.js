@@ -1,15 +1,20 @@
 const BASE_URL = "http://localhost:5000";
-const user_id = $("#user_id");
 
-async function deleteUser(user) {
+async function deleteUser(user_id) {
 	console.debug("deleteUser");
-	const resp = await axios.delete(`${BASE_URL}/users/${user.id}`);
+	const resp = await axios.delete(`${BASE_URL}/users/${user_id}`);
 	const msg = resp.data.delete;
+	return msg;
 }
 
 $(".delete-button").on("click", async function (evt) {
 	evt.preventDefault();
 	console.debug("DeleteButton: onSubmit");
+	const target = $(evt.target);
 
-	deleteUser(user_id);
+	const user_id = target.data("user-id");
+
+	const resp = deleteUser(user_id);
+	console.log(resp);
+	location.reload(true);
 });

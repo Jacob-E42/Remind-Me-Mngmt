@@ -1,45 +1,38 @@
 {% extends "base.html" %} {%block title %} Home {%endblock%} {%block nav%}
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="/">Home</a>
-        <button
-            class="navbar-toggler"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#navbarcollapser"
-            aria-controls="navbarcollapser"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
-        >
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarcollapser">
-            <div class="navbar-nav">
-                <a class="nav-item nav-link" href="/users">Users</a>
+	<div class="container-fluid">
+		<a class="navbar-brand" href="/">Home</a>
+		<button
+			class="navbar-toggler"
+			type="button"
+			data-bs-toggle="collapse"
+			data-bs-target="#navbarcollapser"
+			aria-controls="navbarcollapser"
+			aria-expanded="false"
+			aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="navbarcollapser">
+			<div class="navbar-nav">
+				<a class="nav-item nav-link" href="/users">Users</a>
 
-                <a class="nav-item nav-link reg" href="{{url_for('show_user_details', id=current_user.id)}}"
-                    >My Tasks</a
-                >
+				<a class="nav-item nav-link" href="{{url_for('create_task')}}">Create Task</a>
 
-                <a class="nav-item nav-link" href="{{url_for('create_task')}}">Create Task</a>
+				<a class="nav-item nav-link admin" href="{{url_for('show_all_tasks')}}">Upcoming Tasks</a>
+				<a class="nav-item nav-link admin" href="#">Incompleted Tasks</a>
+				<a class="nav-item nav-link admin" href="#">Completed Tasks</a>
 
-                <a class="nav-item nav-link admin" href="{{url_for('show_all_tasks')}}">Upcoming Tasks</a>
-                <a class="nav-item nav-link admin" href="#">Incompleted Tasks</a>
-                <a class="nav-item nav-link admin" href="#">Completed Tasks</a>
+				<a class="nav-link" href="/login">Login</a>
+				<a class="nav-link" href="/signup">Sign Up</a>
 
-                <a class="nav-link" href="/login">Login</a>
-                <a class="nav-link" href="/signup">Sign Up</a>
-
-                <a class="nav-link" href="{{url_for('logout')}}">Logout</a>
-            </div>
-        </div>
-    </div>
+				<a class="nav-link" href="{{url_for('logout')}}">Logout</a>
+			</div>
+		</div>
+	</div>
 </nav>
-<p class="d-inline">
-    {{current_user}} | authenticated: {{current_user.is_authenticated}} | is_admin:{{current_user.is_admin}}
-</p>
+<p class="d-inline">{{current_user}} | authenticated: {{current_user.is_authenticated}} | is_admin:{{current_user.is_admin}}</p>
 <form id="change-form" class="d-inline" method="post" action="/users/change">
-    <button class="d-inline btn btn-success" type="submit">Change</button>
+	<button class="d-inline btn btn-success" type="submit">Change</button>
 </form>
 
 {%block content%} {%endblock%} {%endblock%}

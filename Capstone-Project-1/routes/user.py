@@ -3,7 +3,7 @@ from routes.login import admin_required, load_user
 from routes.reminder import remind_user
 from models import db, User, Task, Assignment
 from forms import  EditUserForm, AssignUserForm, CreateUserForm, AssignTaskForm
-from flask import Flask, request, redirect, render_template, session, flash, url_for, abort
+from flask import Flask, request, redirect, render_template, session, flash, url_for, abort, jsonify
 from flask_login import login_required, current_user
 
 
@@ -74,14 +74,14 @@ def edit_user(id):
     return render_template("users/edit_user.html", form=form, user=user)
 
 
-@app.route("/users/<int:id>", methods=["POST", "DELETE"])
+@app.route("/users/<int:id>", methods=["DELETE"])
 @admin_required
 def delete_user(id):
     user = User.query.get_or_404(id)
     db.session.delete(user)
     db.session.commit()
     flash("User deleted!", "danger")
-    return jsonify({delete: "successful"})
+    return jsonify({'delete': "successful"})
 
 
 @app.route("/users/<int:id>/assign", methods=["GET", "POST"])
@@ -119,4 +119,4 @@ def change_admin_status():
     current_user.change_admin()
     db.session.commit()
     flash("Admin status changed", "success")
-    return redirect("/")
+    return redirect(request.referrer)
