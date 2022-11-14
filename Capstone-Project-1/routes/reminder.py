@@ -1,6 +1,7 @@
 from app import app
 from routes.login import admin_required
 from models import db, User, Task
+from flask import Flask, request, redirect, render_template, url_for, flash
 from secret import ACCOUNT_SID, TEST_AUTH_TOKEN, AUTH_TOKEN, SERVICE_SID
 from twilio.rest import Client
 
@@ -14,7 +15,8 @@ def send_daily_reminder():
     all_users = User.query.all()
     for user in all_users:
         remind_user(user.id)
-    return "You just reminded everyone!"
+        flash("You reminded all users!", "success")
+    return redirect(url_for('show_all_users'))
 
 
 @app.route("/remind/task/<int:task_id>", methods=["POST", "GET"])
@@ -26,7 +28,8 @@ def remind_for_task(task_id):
     for user in assigned_users:
         body = generate_body(user, "task", task)
         reminder = send_sms(user.phone, body)
-    return "You sent a reminder about a task!"
+        flash("You sent a reminder about a task!", "successs")
+    return redirect(url_for('show_all_tasks'))
 
 
 @app.route("/remind/user/<user_id>", methods=["POST", "GET"])
@@ -35,10 +38,9 @@ def remind_user(user_id):
     
     user = User.query.get(user_id)
     body = generate_body(user, "user")
-    
     reminder = send_sms(user.phone, body)
-    
-    return "You sent a reminder!"
+    flash("You sent a reminder!", "success")
+    return redirect(url_for('show_user_details', id=user_id))
 
 
 @app.route("/notify/<int:task_id>", methods=["POST", "GET"])
@@ -48,7 +50,8 @@ def notify_admin(task_id):
     admin= User.query.get_or_404(task.created_by)
     body = generate_body(admin, "notify", task)
     reminder = send_sms(admin.phone, body)
-    return "You sent a notification!"
+    flash("You sent a notification!", "success")
+    return redirect(url_for('show_all_tasks'))
 
 
 

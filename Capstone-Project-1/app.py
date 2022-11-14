@@ -1,7 +1,6 @@
 """
 """
 
-
 from models import db, connect_db
 from secret import SECRET_KEY
 from flask import Flask, request, redirect, render_template, session, flash, url_for, abort

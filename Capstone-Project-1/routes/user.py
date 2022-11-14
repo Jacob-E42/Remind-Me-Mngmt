@@ -81,7 +81,7 @@ def delete_user(id):
     db.session.delete(user)
     db.session.commit()
     flash("User deleted!", "danger")
-    return redirect(url_for('show_all_users'))
+    return jsonify({delete: "successful"})
 
 
 @app.route("/users/<int:id>/assign", methods=["GET", "POST"])
