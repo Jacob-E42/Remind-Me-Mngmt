@@ -22,6 +22,7 @@ def show_all_users():
 @app.route("/users/<int:id>", methods=["GET"])
 @admin_required
 def show_user_details(id):
+    
     user = User.query.get_or_404(id)
     tasks = user.tasks
 
@@ -55,23 +56,41 @@ def create_user():
         
         return render_template("users/create_user.html", form=form)
     
-
-
-@app.route("/users/<int:id>/edit", methods=["GET", "POST", "PUT", "PATCH"])
+@app.route("/users/<int:id>/edit", methods=["GET"])
 @admin_required
-def edit_user(id):
+def show_edit_user_form(id):
     user = load_user(id)
     form = EditUserForm(obj=user)
-    if form.validate_on_submit():
+
+    return render_template("users/edit_user.html", form=form, user=user)
+
+@app.route("/users/<int:id>", methods=["PUT", "PATCH"])
+@admin_required
+def edit_user(id):
+    user = User.query.get_or_404(id)
+    form = EditUserForm(obj=request.data)
+    form.is_submitted()
+    if form.validate():
+        
         data = {k: v for k, v in form.data.items() if k != "csrf_token"}
         for (k, v) in data.items():
             setattr(user, k, v)
         db.session.add(user)
         db.session.commit()
         flash("User updated!", "success")
-        return redirect(url_for('show_user_details', id=user.id))
+        return url_for('show_user_details', id=id)
+    else:
+    
+        print(form.errors)
+        for error in form.errors:
+            print(error)
+        flash("form is unvalidated", "danger")
+        
+        return redirect(url_for('show_edit_user_form', id=id), code=305)
+    
+    return redirect(url_for('show_homepage'))
 
-    return render_template("users/edit_user.html", form=form, user=user)
+    
 
 
 @app.route("/users/<int:id>", methods=["DELETE"])
