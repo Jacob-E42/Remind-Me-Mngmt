@@ -20,7 +20,7 @@ def send_daily_reminder():
     return redirect(url_for('show_all_users'))
 
 
-@app.route("/remind/task/<int:task_id>", methods=["POST", "GET"])
+@app.route("/remind/task/<int:task_id>", methods=["POST"])
 @admin_required
 def remind_for_task(task_id):
     task = Task.query.get(task_id)
@@ -33,7 +33,7 @@ def remind_for_task(task_id):
     return redirect(url_for('show_all_tasks'))
 
 
-@app.route("/remind/user/<user_id>", methods=["POST", "GET"])
+@app.route("/remind/user/<user_id>", methods=["POST"])
 @admin_required
 def remind_user(user_id):
     
@@ -44,7 +44,7 @@ def remind_user(user_id):
     return redirect(url_for('show_user_details', id=user_id))
 
 
-@app.route("/notify/<int:task_id>", methods=["POST", "GET"])
+@app.route("/notify/<int:task_id>", methods=["POST"])
 @admin_required
 def notify_admin(task_id):
     task = Task.query.get_or_404(task_id)
