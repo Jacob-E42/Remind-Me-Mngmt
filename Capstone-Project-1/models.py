@@ -36,6 +36,16 @@ class User(db.Model, UserMixin):
     def __repr__(self):
         
         return f" {self.id} {self.first_name} {self.last_name} "
+    
+    def get_id(self):
+        if self.is_authenticated:
+            try:
+                return str(self.id)
+            except AttributeError:
+                raise NotImplementedError("No `id` attribute - override `get_id`") from None
+        else:
+            print("look at model class")
+            return 0
 
     def change_admin(self):
         self.is_admin = not self.is_admin

@@ -22,7 +22,8 @@ def show_all_users():
 @app.route("/users/<int:id>", methods=["GET"])
 @admin_required
 def show_user_details(id):
-    
+    if id == 0:
+        return redirect('login')
     user = User.query.get_or_404(id)
     tasks = user.tasks
 

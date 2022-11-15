@@ -17,8 +17,8 @@
 				<a class="nav-item nav-link" href="/users">Users</a>
 
 				<a class="nav-item nav-link" href="{{url_for('create_task')}}">Create Task</a>
-
-				<a class="nav-item nav-link admin" href="{{url_for('show_all_tasks')}}">Upcoming Tasks</a>
+				<a class="nav-item nav-link admin" href="{{url_for('show_all_tasks')}}">All Tasks</a>
+				<a class="nav-item nav-link admin" href="#">Upcoming Tasks</a>
 				<a class="nav-item nav-link admin" href="#">Incompleted Tasks</a>
 				<a class="nav-item nav-link admin" href="#">Completed Tasks</a>
 
@@ -26,6 +26,7 @@
 				<a class="nav-link" href="/signup">Sign Up</a>
 
 				<a class="nav-link" href="{{url_for('logout')}}">Logout</a>
+				<a href="{{url_for('show_user_details', id=current_user.id)}}" class="nav-item nav-link">My Profile</a>
 			</div>
 		</div>
 	</div>

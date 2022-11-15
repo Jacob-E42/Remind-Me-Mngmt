@@ -88,8 +88,11 @@ def generate_body(user, type, task=None):
         msg = f"Hi {user.first_name} {user.last_name}, \n the task {task.title} has been completed."
         return msg
     elif type == "daily":
-        msg = f"Hi {user.first_name} {user.last_name}, here are your upcoming tasks for today:\n"
         user_assignments = [assignment for assignment in user.assignments if assignment.remind_daily]
+        if len(user_assignments) == 0:
+             return ""
+        msg = f"Hi {user.first_name} {user.last_name}, here are your upcoming tasks for today:\n"
+        
         for assignment in user_assignments:
             string = f"The task {assignment.task.title} is due by {assignment.task.due_time}\n"
             msg += string
