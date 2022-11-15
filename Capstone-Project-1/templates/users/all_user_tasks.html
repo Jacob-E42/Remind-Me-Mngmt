@@ -2,57 +2,47 @@
 <h1 class="display-2 text-center">My Tasks</h1>
 
 <div class="container">
-    <ul>
-        {% for task in tasks %}
+	<ul>
+		{% for task in tasks %}
 
-        <li class="card">
-            <div class="card-body">
-                <div class="card-title">
-                    <h4>
-                        <span class="badge text-bg-dark fw-bold">{{task.title}}</span>
-                        <span class="badge bg-secondary fw-semibold">{{task.due_time}}</span>
-                        <span class="m-3 fw-semibold">
-                            {%if task.is_completed%}Completed{%else%}Incomplete{%endif%}
-                        </span>
-                    </h4>
-                </div>
-                <form class="card-text" action="#" method="post">
-                    <div class="row">
-                        <div class="col">
-                            <button
-                                formaction="{{url_for('edit_completed_status', id=task.id)}}"
-                                class="btn btn-primary"
-                            >
-                                Mark complete
-                            </button>
-                            <button
-                                class="btn btn-info"
-                                formaction="{{url_for('assign_user_to_task', id=task.id)}}"
-                                formmethod="get"
-                            >
-                                Reassign
-                            </button>
-                            <button
-                                class="btn btn-warning"
-                                formaction="{{url_for('remind_for_task', task_id=task.id)}}"
-                                formmethod="post"
-                            >
-                                Remind
-                            </button>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col">
-                            <button class="btn btn-success">Edit</button>
-                            <button formaction="{{url_for('delete_task', id=task.id)}}" class="btn btn-outline-danger">
-                                Detete
-                            </button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </li>
-        {%endfor%}
-    </ul>
+		<li class="card">
+			<div class="card-body">
+				<div class="card-title">
+					<h4>
+						<span class="badge text-bg-dark fw-bold">{{task.title}}</span>
+						<span class="badge bg-secondary fw-semibold">{{task.due_time}}</span>
+						<span class="m-3 fw-semibold">{%if task.is_completed%}Completed{%else%}Incomplete{%endif%}</span>
+					</h4>
+				</div>
+				<form class="card-text" action="#" method="post">
+					<div class="row">
+						<div class="col">
+							<button
+								formaction="{{url_for('edit_completed_status', id=task.id, user=current_user.id)}}"
+								class="btn btn-primary">
+								Mark complete
+							</button>
+							<button class="btn btn-info" formaction="{{url_for('assign_user_to_task', id=task.id)}}" formmethod="get">
+								Reassign
+							</button>
+							<button
+								class="btn btn-warning"
+								formaction="{{url_for('remind_for_task', task_id=task.id)}}"
+								formmethod="post">
+								Remind
+							</button>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col">
+							<button class="btn btn-success">Edit</button>
+							<button formaction="{{url_for('delete_task', id=task.id)}}" class="btn btn-outline-danger">Detete</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</li>
+		{%endfor%}
+	</ul>
 </div>
 {%endblock%}

@@ -1,5 +1,5 @@
 from app import app
-from routes.login import admin_required
+from routes.login import admin_required, login_required
 from models import db, Task, Assignment, User
 from forms import CreateTaskForm, EditTaskForm, AssignTaskForm, AssignUserForm
 from flask import Flask, request, redirect, render_template, session, flash, url_for, abort
@@ -63,15 +63,15 @@ def delete_task(id):
     return redirect(url_for('show_all_tasks'))
 
 
-@app.route("/tasks/<int:id>/completed", methods=["POST", "PUT", "PATCH"])
-@admin_required
-def edit_completed_status(id):
+@app.route("/tasks/<int:id>/completed/<int:user>", methods=["POST", "PUT", "PATCH"])
+@login_required
+def edit_completed_status(id, user):
     task = Task.query.get_or_404(id)
     task.is_completed = not task.is_completed
     db.session.add(task)
     db.session.commit()
     flash("Status changed", "success")
-    return redirect(url_for('show_all_tasks'))
+    return redirect(url_for('notify_admin', task_id=id, user_id=user), code=307)
 
 
 @app.route("/tasks/<int:id>/assignments", methods=["PUT", "PATCH"])

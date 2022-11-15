@@ -1,6 +1,6 @@
 from app import app
 from routes.login import admin_required
-from models import db, User, Task
+from models import db, User, Task, Assignment
 from flask import Flask, request, redirect, render_template, url_for, flash
 from secret import ACCOUNT_SID, TEST_AUTH_TOKEN, AUTH_TOKEN, SERVICE_SID
 from twilio.rest import Client
@@ -44,11 +44,12 @@ def remind_user(user_id):
     return redirect(url_for('show_user_details', id=user_id))
 
 
-@app.route("/notify/<int:task_id>", methods=["POST"])
-@admin_required
-def notify_admin(task_id):
+@app.route("/notify/<int:task_id>/<int:user_id>", methods=["POST"])
+def notify_admin(task_id, user_id):
+    print("You are in notify")
     task = Task.query.get_or_404(task_id)
-    admin= User.query.get_or_404(task.created_by)
+    assignment = Assignment.query.filter_by(task_id=task_id, assignee_id=user_id).first()
+    admin= User.query.get_or_404(assignment.assigner_id)
     body = generate_body(admin, "notify", task)
     reminder = send_sms(admin.phone, body)
     flash("You sent a notification!", "success")
@@ -85,7 +86,8 @@ def generate_body(user, type, task=None):
         msg = f"Hi {user.first_name} {user.last_name}, the task {task.title} is due by {task.due_time}."
         return msg
     elif type == "notify":
-        msg = f"Hi {user.first_name} {user.last_name}, \n the task {task.title} has been completed."
+        is_complete = "complete" if task.is_completed else "incomplete"
+        msg = f"Hi {user.first_name} {user.last_name}, \n the task {task.title} is now {is_complete}."
         return msg
     elif type == "daily":
         user_assignments = [assignment for assignment in user.assignments if assignment.remind_daily]
