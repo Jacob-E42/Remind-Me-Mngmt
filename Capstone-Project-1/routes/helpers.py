@@ -1,5 +1,5 @@
 from app import app
-from routes.login import admin_required
+
 from models import db, User,  Task
 from secret import ACCOUNT_SID, TEST_AUTH_TOKEN, AUTH_TOKEN, SERVICE_SID
 from flask import Flask, request, redirect, render_template, session, flash, url_for, abort
@@ -8,7 +8,7 @@ from twilio.rest import Client
 
 
 @app.route("/bind")
-@admin_required
+
 def setup_binding():
 
     # Your Account SID from twilio.com/console
@@ -52,3 +52,19 @@ def assign_task(user_id, task_id):
 #     db.session.commit()
 #     flash("Admin status changed", "success")
 #     return redirect("/")
+
+
+# class Unique(object):
+#     """ validator that checks field uniqueness """
+#     def __init__(self, model, field, message=None):
+#         self.model = model
+#         self.field = field
+#         if not message:
+#             message = u'this element already exists'
+#         self.message = message
+
+#     def __call__(self, form, field):         
+#         check = self.model.query.filter(self.field == field.data).first()
+#         print("**********************************************check: ", check)
+#         if check:
+#             raise ValidationError(self.message)

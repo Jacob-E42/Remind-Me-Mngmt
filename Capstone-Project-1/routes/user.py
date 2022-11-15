@@ -36,14 +36,19 @@ def show_user_details(id):
 #     tasks = user.tasks
 
 #     return render_template("users/all_user_tasks.html", user=user, tasks=tasks)
+@app.route("/users/create", methods=["GET"])
+@admin_required
+def show_create_user_form():
+    form = CreateUserForm()
+    return render_template("users/create_user.html", form=form)
 
-
-@app.route("/users", methods=["POST", "GET"])
+@app.route("/users", methods=["POST"])
 @admin_required
 def create_user():
-    form = CreateUserForm()
-
+    form = CreateUserForm(obj=request.data)
+    print(request.data)
     if form.validate_on_submit():
+        print("hopefully here too")
         data = {k: v for k, v in form.data.items(
         ) if k != "password" and k != "csrf_token"}
         new_user = User.register(form.password.data or "123456", data)
@@ -51,10 +56,10 @@ def create_user():
         db.session.commit()
 
         flash('Created New User!', "success")
-        return redirect(url_for('show_homepage'))
+        return redirect(url_for('show_all_users'))
     else:
-        
-        return render_template("users/create_user.html", form=form)
+        print("but hopefullly not here")
+        return redirect(url_for('show_create_user_form'), code=303)
     
 @app.route("/users/<int:id>/edit", methods=["GET"])
 @admin_required
