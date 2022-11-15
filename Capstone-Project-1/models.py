@@ -31,7 +31,7 @@ class User(db.Model, UserMixin):
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     is_admin = db.Column(db.Boolean, nullable=False, default=False)
 
-   
+    assignments = db.relationship("Assignment")
 
     def __repr__(self):
         

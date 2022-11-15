@@ -9,13 +9,14 @@ from twilio.rest import Client
 
 
 
-@app.route("/remind/daily", methods=["POST", "GET"])
+@app.route("/remind/daily", methods=["POST"])
 @admin_required
 def send_daily_reminder():
     all_users = User.query.all()
     for user in all_users:
-        remind_user(user.id)
-        flash("You reminded all users!", "success")
+        body = generate_body(user, "daily")
+        reminder = send_sms(user.phone, body)
+        flash("You sent daily reminders!", "success")
     return redirect(url_for('show_all_users'))
 
 
@@ -86,3 +87,12 @@ def generate_body(user, type, task=None):
     elif type == "notify":
         msg = f"Hi {user.first_name} {user.last_name}, \n the task {task.title} has been completed."
         return msg
+    elif type == "daily":
+        msg = f"Hi {user.first_name} {user.last_name}, here are your upcoming tasks for today:\n"
+        user_assignments = [assignment for assignment in user.assignments if assignment.remind_daily]
+        for assignment in user_assignments:
+            string = f"The task {assignment.task.title} is due by {assignment.task.due_time}\n"
+            msg += string
+        return msg
+    else:
+        return "That is not a valid type indicator"

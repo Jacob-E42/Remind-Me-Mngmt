@@ -134,7 +134,7 @@ def assign_task_to_user(id):
                 db.session.delete(assignment)
                 db.session.commit()
                 flash("Assignment deleted", "success")
-        return redirect(url_for('show_all_tasks'))
+        return redirect(url_for('show_user_details', id=id))
     return render_template("users/create_assignment.html", form=form, user=user)
 
 @app.route("/users/change", methods=["POST", "GET"])

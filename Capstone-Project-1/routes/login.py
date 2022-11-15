@@ -60,7 +60,7 @@ def signup():
         delta = timedelta(days=30)
         login_user(new_user, remember=True, duration=delta)
         flash('Signed up successfully!', "success")
-        url = url_for('show_homepage')
+        url = url_for('show_all_users')
         return redirect(url)
     else:
         return render_template("login/signup.html", form=form)
