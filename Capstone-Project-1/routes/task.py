@@ -37,12 +37,21 @@ def show_all_tasks():
 
 @app.route("/tasks/<int:id>", methods=["GET"])
 def show_task(id):
-    return "You didn't implement me yet!"
+    task = Task.query.get_or_404(id)
+    users = task.users
+    
+    return render_template("tasks/task_details.html", task=task, users=users)
 
 
 @app.route("/tasks/<int:id>", methods=["POST"])
 def post_task(id):
     return "You didn't implement me yet!"
+
+
+@app.route("/tasks/<int:id>/update")
+@login_required
+def show_edit_task_form():
+    return "You didn't implement me yet"
 
 
 @app.route("/tasks/<int:id>", methods=["PUT", "PATCH"])
@@ -63,7 +72,7 @@ def delete_task(id):
     return redirect(url_for('show_all_tasks'))
 
 
-@app.route("/tasks/<int:id>/completed/<int:user>", methods=["POST", "PUT", "PATCH"])
+@app.route("/tasks/<int:id>/completed/<int:user>", methods=["POST"])
 @login_required
 def edit_completed_status(id, user):
     task = Task.query.get_or_404(id)

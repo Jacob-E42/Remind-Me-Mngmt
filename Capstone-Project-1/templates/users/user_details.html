@@ -25,7 +25,9 @@
 			<div class="card-body">
 				<div class="card-title">
 					<h4>
-						<span class="badge text-bg-dark fw-bold">{{task.title}}</span>
+						<span class="badge text-bg-dark fw-bold">
+							<a href="{{url_for('show_task', id=task.id)}}" class="">{{task.title}}</a>
+						</span>
 						<span class="badge bg-secondary fw-semibold">{{task.due_time}}</span>
 						<span class="m-3 fw-semibold">{%if task.is_completed%}Completed{%else%}Incomplete{%endif%}</span>
 					</h4>
