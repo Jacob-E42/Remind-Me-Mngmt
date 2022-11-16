@@ -6,7 +6,7 @@ from flask import Flask, request, redirect, render_template, session, flash, url
 from flask_login import login_required, current_user
 
 
-@app.route("/assignments/users/<int:id>", methods=["POST"])
+@app.route("/assignments/users/<int:id>", methods=["GET","POST"])
 @admin_required
 def assign_task_to_user(id):
     form = AssignTaskForm()
@@ -33,19 +33,22 @@ def assign_task_to_user(id):
         #         db.session.commit()
         #         flash("Assignment deleted", "success")
         return redirect(url_for('show_user_details', id=id))
-    return render_template("assignments/create_task_assignment.html", form=form, user=user)
+    return render_template("assignments/create_user_assignment.html", form=form, user=user)
 
 
 @app.route("/assignments/users/<int:user_id>/<int:task_id>", methods=["GET"])
 def show_edit_user_assignment(user_id, task_id):
-    form = EditUserAssignmentForm()
     user = User.query.get_or_404(user_id)
+    assignment = Assignment.query.filter_by(assignee_id=user_id, task_id=task_id).first()
+    form = EditUserAssignmentForm(obj=assignment)
+    form.task_id.choices = [(task.id, task.title) for task in Task.query.all()]
+  
     return render_template("assignments/edit_user_assignment.html", form=form, user=user)
 
 @app.route("/assignments/users/<int:user_id>/<int:task_id>", methods=["PUT", "PATCH"])
 def edit_user_assignment(user_id, task_id):
     form = EditUserAssignmentForm(obj=request.data)
-    assignment = Assignment.query.filter_by(user_id=user_id, task_id=task_id).first()
+    assignment = Assignment.query.filter_by(assignee_id=user_id, task_id=task_id).first()
     form.is_submitted()
     if form.validate():
         data = {k: v for k, v in form.data.items() if k != "csrf_token"}

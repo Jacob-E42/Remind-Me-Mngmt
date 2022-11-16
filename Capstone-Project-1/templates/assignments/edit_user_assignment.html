@@ -10,7 +10,10 @@
 
 		{% for field in form if field.widget.input_type != 'hidden' %}
 
-		<p>{{ field.label }} {% for error in field.errors %} {{ error }} {% endfor %}</p>
+		<p>
+			{{ field.label }} {%if field.type == 'SelectMultipleField'%} {{ field(rows=4, multiple=True) }} {%else%} {{field}}
+			{%endif%} {% for error in field.errors %} {{ error }} {% endfor %}
+		</p>
 
 		{% endfor %}
 
