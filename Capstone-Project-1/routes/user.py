@@ -47,9 +47,7 @@ def show_create_user_form():
 @admin_required
 def create_user():
     form = CreateUserForm(obj=request.data)
-    print(request.data)
     if form.validate_on_submit():
-        print("hopefully here too")
         data = {k: v for k, v in form.data.items(
         ) if k != "password" and k != "csrf_token"}
         new_user = User.register(form.password.data or "123456", data)
@@ -59,7 +57,6 @@ def create_user():
         flash('Created New User!', "success")
         return redirect(url_for('show_all_users'))
     else:
-        print("but hopefullly not here")
         return redirect(url_for('show_create_user_form'), code=303)
     
 @app.route("/users/<int:id>/edit", methods=["GET"])

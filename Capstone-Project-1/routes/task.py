@@ -9,11 +9,23 @@ from flask_login import current_user
 
 # ------------------------------------------------------------------------------------------------ Task routes
 
+@app.route("/tasks", methods=["GET"])
+@admin_required
+def show_all_tasks():
+    tasks = Task.query.order_by(Task.id).all()
+    assignments = Assignment.query.all()
+    return render_template("tasks/all_tasks.html", tasks=tasks, assignments=assignments)
 
-@app.route("/tasks/create", methods=["GET", "POST"])
+@app.route("/tasks/create", methods=["GET"])
+@login_required
+def show_create_task_form():
+    form = CreateTaskForm()
+    return render_template("tasks/create_task.html", form=form)
+
+@app.route("/tasks", methods=["POST"])
 @admin_required
 def create_task():
-    form = CreateTaskForm()
+    form = CreateTaskForm(obj=request.data)
     if form.validate_on_submit():
 
         data = {k: v for k, v in form.data.items() if k != "csrf_token"}
@@ -23,16 +35,9 @@ def create_task():
 
 
         flash("New Task Created!", "success")
-        return redirect("/")
-    return render_template("tasks/create_task.html", form=form)
-
-
-@app.route("/tasks", methods=["GET"])
-@admin_required
-def show_all_tasks():
-    tasks = Task.query.order_by(Task.id).all()
-    assignments = Assignment.query.all()
-    return render_template("tasks/all_tasks.html", tasks=tasks, assignments=assignments)
+        return redirect(url_for('show_all_tasks'))
+    return redirect(url_for('show_create_task_form'))
+    
 
 
 @app.route("/tasks/<int:id>", methods=["GET"])
@@ -71,7 +76,7 @@ def delete_task(id):
     flash("Task deleted!", "danger")
     return redirect(url_for('show_all_tasks'))
 
-
+# make accessable only if the task is assigned
 @app.route("/tasks/<int:id>/completed/<int:user>", methods=["POST"])
 @login_required
 def edit_completed_status(id, user):
