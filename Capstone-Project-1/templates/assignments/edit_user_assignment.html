@@ -1,0 +1,21 @@
+{% extends 'index.html' %} {%block content%}
+<h1 class="display-3">Edit Assignment</h1>
+
+<div class="container">
+	<form action="#" method="get">
+		<p class="header-6">{{user.first_name}} {{user.last_name}}</p>
+
+		{{ form.hidden_tag() }}
+		<!--add type=hidden form fields -->
+
+		{% for field in form if field.widget.input_type != 'hidden' %}
+
+		<p>{{ field.label }} {% for error in field.errors %} {{ error }} {% endfor %}</p>
+
+		{% endfor %}
+
+		<button class="btn btn-primary edit-user-assignment-button" type="submit" data-user-id="{{user.id}}">Submit</button>
+		<a class="btn btn-info" href="{{url_for('show_user', id=user.id)}}">Back</a>
+	</form>
+</div>
+{%endblock%}

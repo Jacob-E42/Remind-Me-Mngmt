@@ -25,7 +25,7 @@
 				<a class="nav-link" href="/signup">Sign Up</a>
 
 				<a class="nav-link" href="{{url_for('logout')}}">Logout</a>
-				<a href="{{url_for('show_user_details', id=current_user.id)}}" class="nav-item nav-link">My Profile</a>
+				<a href="{{url_for('show_user', id=current_user.id)}}" class="nav-item nav-link">My Profile</a>
 			</div>
 		</div>
 	</div>

@@ -1,4 +1,5 @@
 from app import app
+from routes.helpers import admin_required, is_safe_url
 from models import db, User
 from forms import LoginForm, SignupForm
 from flask import Flask, request, redirect, render_template, session, flash, url_for, abort
@@ -76,19 +77,6 @@ def logout():
 
 # ------------------------------------------------------------------------------------------ User login functions
 
-
-def admin_required(func):
-    @wraps(func)
-    def validate_is_admin(*args, **kwargs):
-        if not (current_user.is_authenticated and current_user.is_admin):
-            flash("You must be an admin to access this page", "danger")
-            return redirect(url_for('login'), code=303)
-
-        return func(*args, **kwargs)
-
-    return validate_is_admin
-
-
 @login_manager.user_loader
 def load_user(user_id):
     user = User.query.get(user_id)
@@ -97,8 +85,3 @@ def load_user(user_id):
     return None
 
 
-def is_safe_url(target):
-    ref_url = urlparse(request.host_url)
-    test_url = urlparse(urljoin(request.host_url, target))
-    return test_url.scheme in ('http', 'https') and \
-        ref_url.netloc == test_url.netloc

@@ -18,7 +18,7 @@
 							<!-- </a> -->
 						</h5>
 
-						<a href="{{url_for('assign_task_to_user', id=user.id)}}" class="btn btn-primary submit">Assign Task</a>
+						<a href="{{url_for('assign_task_to_user', id=user.id)}}" class="btn btn-primary submit">Assign New Task</a>
 						<a href="{{url_for('show_edit_user_form', id=user.id)}}" class="btn btn-secondary">Edit</a>
 						<form action="#" method="post" class="d-inline-block">
 							<button formaction="{{url_for('remind_user', user_id=user.id)}}" class="btn btn-warning">Remind</button>

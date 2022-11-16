@@ -85,3 +85,27 @@ $(".delete-task-button").on("click", async function (evt) {
 
 	window.location.replace(`${BASE_URL}/${resp.data}`);
 });
+
+$(".edit-user-assignment-button").on("submit", async function (evt) {
+	evt.preventDefault();
+	console.debug("EditUserAssignmentButton: onSubmit");
+
+	const target = $(evt.target);
+	const user_id = target.data("user-id");
+
+	let csrf_token = $("#csrf_token").val();
+	let task_id = $("#task_id").val();
+	let remind_daily = $("#remind_daily").val();
+	let notify_admin = $("#notify_admin").val();
+
+	let assignment = {
+		csrf_token: csrf_token,
+		task_id: task_id,
+		remind_daily: remind_daily,
+		notify_admin: notify_admin
+	};
+
+	const resp = await axios.patch(`${BASE_URL}/assignments/users/${user_id}/${task_id}`, assignment);
+
+	window.location.replace(`${BASE_URL}/${resp.data}`);
+});

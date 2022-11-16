@@ -63,4 +63,14 @@ class AssignTaskForm(FlaskForm):
   remind_daily = BooleanField("Remind Daily", validators=[])
   notify_admin = BooleanField("Notify Admin When Completed", validators=[])
 
+class EditTaskAssignmentForm(FlaskForm):
+  assignee_id = SelectMultipleField("Assign To", coerce=int, validators=[])
+  remind_daily = BooleanField("Remind Daily", validators=[])
+  notify_admin = BooleanField("Notify Admin When Completed", validators=[])
+
+class EditUserAssignmentForm(FlaskForm):
+  task_id = SelectMultipleField("Assign Task", coerce=int, validators=[])
+  remind_daily = BooleanField("Remind Daily", validators=[])
+  notify_admin = BooleanField("Notify Admin When Completed", validators=[])
+
  

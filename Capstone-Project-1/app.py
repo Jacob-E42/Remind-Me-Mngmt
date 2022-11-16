@@ -15,7 +15,7 @@ import os
 
 app = Flask(__name__)
 
-from routes import user, login, task, helpers, reminder
+from routes import user, login, task, helpers, reminder, assignment
 
 uri = os.environ.get("DATABASE_URL", 'postgresql:///organizations_db')  
 if uri.startswith("postgres://"):
