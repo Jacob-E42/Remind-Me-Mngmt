@@ -39,7 +39,6 @@ def create_task():
     return redirect(url_for('show_create_task_form'))
     
 
-
 @app.route("/tasks/<int:id>", methods=["GET"])
 def show_task(id):
     task = Task.query.get_or_404(id)
@@ -48,23 +47,34 @@ def show_task(id):
     return render_template("tasks/task_details.html", task=task, users=users)
 
 
-@app.route("/tasks/<int:id>", methods=["POST"])
-def post_task(id):
-    return "You didn't implement me yet!"
-
-
-@app.route("/tasks/<int:id>/update")
+@app.route("/tasks/<int:id>/update", methods=["GET"])
 @login_required
-def show_edit_task_form():
-    return "You didn't implement me yet"
+def show_edit_task_form(id):
+    task = Task.query.get_or_404(id)
+    print(request.data)
+    form = form = EditTaskForm(obj=task)
+    return render_template("tasks/edit_task.html", form=form, task=task)
 
 
 @app.route("/tasks/<int:id>", methods=["PUT", "PATCH"])
-@admin_required
+@login_required
 def edit_task(id):
     task = Task.query.get_or_404(id)
-    form = EditTaskForm(obj=task)
-    return "You didn't implement me yet!"
+    form = EditTaskForm(obj=request.data)
+    form.is_submitted()
+    if form.validate():
+        data = {k: v for k, v in form.data.items() if k != "csrf_token"}
+        for (k, v) in data.items():
+            setattr(task, k, v)
+        db.session.add(task)
+        db.session.commit()
+        flash("Task updated!", "success")
+        return url_for('show_task', id=id)
+
+    for field in form:
+        for error in field.errors:
+            flash(error, "danger")
+    return url_for('show_edit_task_form', id=id)
 
 
 @app.route("/tasks/<int:id>/delete", methods=["POST", "DELETE"])

@@ -59,12 +59,11 @@ def create_user():
     else:
         return redirect(url_for('show_create_user_form'), code=303)
     
-@app.route("/users/<int:id>/edit", methods=["GET"])
+@app.route("/users/<int:id>/update", methods=["GET"])
 @admin_required
 def show_edit_user_form(id):
     user = load_user(id)
     form = EditUserForm(obj=user)
-
     return render_template("users/edit_user.html", form=form, user=user)
 
 @app.route("/users/<int:id>", methods=["PUT", "PATCH"])
@@ -82,16 +81,13 @@ def edit_user(id):
         db.session.commit()
         flash("User updated!", "success")
         return url_for('show_user_details', id=id)
-    else:
     
-        print(form.errors)
-        for error in form.errors:
-            print(error)
-        flash("form is unvalidated", "danger")
-        
-        return redirect(url_for('show_edit_user_form', id=id), code=305)
+    for field in form:
+        for error in field.errors:
+            flash(error, "danger")
+    return url_for('show_edit_user_form', id=id)
+
     
-    return redirect(url_for('show_homepage'))
 
     
 

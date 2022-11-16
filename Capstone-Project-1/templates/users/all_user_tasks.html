@@ -35,7 +35,7 @@
 					</div>
 					<div class="row">
 						<div class="col">
-							<button class="btn btn-success">Edit</button>
+							<button formaction="{{url_for('show_edit_task_form', id=task.id)}}" class="btn btn-success">Edit</button>
 							<button formaction="{{url_for('delete_task', id=task.id)}}" class="btn btn-outline-danger">Detete</button>
 						</div>
 					</div>

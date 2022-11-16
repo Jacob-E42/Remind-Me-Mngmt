@@ -1,0 +1,19 @@
+{% extends 'index.html' %} {%block content%}
+<h1 class="display-3">Edit Task</h1>
+
+<div class="container" id="edit-task-form">
+	<form action="#" method="get">
+		{{ form.hidden_tag() }}
+		<!--add type=hidden form fields -->
+
+		{% for field in form if field.widget.input_type != 'hidden' %}
+
+		<p>{{ field.label }} {{ field }} {% for error in field.errors %} {{ error }} {% endfor %}</p>
+
+		{% endfor %}
+
+		<button class="btn btn-primary edit-task-button" data-task-id="{{task.id}}">Submit</button>
+		<a class="btn btn-info" href="{{url_for('show_task', id=task.id)}}"">Back</a>
+	</form>
+</div>
+{%endblock%}
