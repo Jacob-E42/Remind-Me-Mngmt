@@ -43,14 +43,14 @@ class CreateTaskForm(FlaskForm):
   title = StringField("Title", validators=[DataRequired(message="Title is required")])
   description = TextAreaField("Description", validators=[])
   resp_type = SelectField("Type", choices=[("personal","Personal"), ("organizational", "Organizational")])
-  due_time = DateTimeField("Time Due", format='%Y-%m-%d')
+  due_time = DateTimeField("Time Due", format='%Y-%m-%d', validators=[DataRequired(message="A due time is required")])
   is_completed = BooleanField("Completed")
 
 class EditTaskForm(FlaskForm):
   title = StringField("Title", validators=[DataRequired(message="Title is required")])
   description = TextAreaField("Description", validators=[])
   resp_type = SelectField("Type", choices=[("personal","Personal"), ("organizational", "Organizational")])
-  due_time = DateTimeField("Time Due", format='%Y-%m-%d')
+  due_time = DateTimeField("Time Due", format='%Y-%m-%d', validators=[DataRequired(message="A due time is required")])
   is_completed = BooleanField("Completed")
 
 class AssignUserForm(FlaskForm):

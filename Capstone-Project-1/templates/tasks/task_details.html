@@ -11,12 +11,10 @@
 			<p class="card-text">Responsibility Type: {{task.resp_type}}</p>
 			<a class="btn btn-primary" href="{{url_for('assign_user_to_task', id=task.id)}}">Assign User</a>
 			<a href="{{url_for('show_edit_task_form', id=task.id)}}" class="btn btn-secondary">Edit</a>
-			<form action="#" method="post" class="d-inline-block">
-				<button formaction="{{url_for('remind_for_task', task_id=task.id)}}" class="btn btn-warning">Remind</button>
+			<form action="{{url_for('remind_for_task', task_id=task.id)}}" method="post" class="d-inline-block">
+				<button class="btn btn-warning">Remind</button>
 			</form>
-			<form action="{{url_for('edit_task', id=task.id)}}" method="post" class="d-inline-block">
-				<button class="btn btn-danger delete-button" data-user-id="{{task.id}}">Delete</button>
-			</form>
+			<button class="d-inline-block btn btn-danger delete-task-button" data-task-id="{{task.id}}">Delete</button>
 		</div>
 	</div>
 </div>

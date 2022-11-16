@@ -12,7 +12,7 @@
 				<button formaction="{{url_for('remind_user', user_id=user.id)}}" class="btn btn-warning">Remind</button>
 			</form>
 			<form action="{{url_for('edit_user', id=user.id)}}" method="post" class="d-inline-block">
-				<button class="btn btn-danger delete-button" data-user-id="{{user.id}}">Delete</button>
+				<button class="btn btn-danger delete-user-button" data-user-id="{{user.id}}">Delete</button>
 			</form>
 		</div>
 	</div>
@@ -51,7 +51,7 @@
 					<div class="row">
 						<div class="col">
 							<a href="{{url_for('show_edit_task_form', id=task.id)}}" class="btn btn-success">Edit</a>
-							<button href="#" formaction="{{url_for('delete_task', id=task.id)}}" class="btn btn-outline-danger">
+							<button formaction="#" class="btn btn-outline-danger delete-task-button" data-task-id="{{task.id}}">
 								Delete
 							</button>
 						</div>

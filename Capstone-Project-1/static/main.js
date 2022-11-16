@@ -9,20 +9,6 @@ const $editUserForm = $("#edit-user-form");
 // 	return msg;
 // }
 
-$(".delete-button").on("click", async function (evt) {
-	evt.preventDefault();
-	console.debug("DeleteButton: onClick");
-	const target = $(evt.target);
-
-	const user_id = target.data("user-id");
-
-	const resp = await axios.delete(`${BASE_URL}/users/${user_id}`);
-	const msg = resp.data.delete;
-	console.log(msg);
-
-	location.reload(true);
-});
-
 $(".edit-user-button").on("click", async function (evt) {
 	evt.preventDefault();
 	console.debug("EditUserButton: onSubmit");
@@ -37,7 +23,7 @@ $(".edit-user-button").on("click", async function (evt) {
 	let email = $("#email").val();
 	let phone = $("#phone").val();
 
-	let obj = {
+	let user = {
 		csrf_token: csrf_token,
 		first_name: first_name,
 		last_name: last_name,
@@ -46,8 +32,18 @@ $(".edit-user-button").on("click", async function (evt) {
 		phone: phone
 	};
 
-	const resp = await axios.patch(`${BASE_URL}/users/${user_id}`, obj);
+	const resp = await axios.patch(`${BASE_URL}/users/${user_id}`, user);
 
+	window.location.replace(`${BASE_URL}/${resp.data}`);
+});
+
+$(".delete-user-button").on("click", async function (evt) {
+	evt.preventDefault();
+	console.debug("DeleteUserButton: onClick");
+	const target = $(evt.target);
+	const user_id = target.data("user-id");
+
+	const resp = await axios.delete(`${BASE_URL}/users/${user_id}`);
 	window.location.replace(`${BASE_URL}/${resp.data}`);
 });
 
@@ -75,6 +71,17 @@ $(".edit-task-button").on("click", async function (evt) {
 	};
 
 	const resp = await axios.patch(`${BASE_URL}/tasks/${task_id}`, task);
-	console.log(resp);
+
+	window.location.replace(`${BASE_URL}/${resp.data}`);
+});
+
+$(".delete-task-button").on("click", async function (evt) {
+	evt.preventDefault();
+	console.debug("DeleteTaskButton: onClick");
+	const target = $(evt.target);
+	const task_id = target.data("task-id");
+
+	const resp = await axios.delete(`${BASE_URL}/tasks/${task_id}`);
+
 	window.location.replace(`${BASE_URL}/${resp.data}`);
 });

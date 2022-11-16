@@ -82,7 +82,7 @@ def admin_required(func):
     def validate_is_admin(*args, **kwargs):
         if not (current_user.is_authenticated and current_user.is_admin):
             flash("You must be an admin to access this page", "danger")
-            return redirect(url_for('login'))
+            return redirect(url_for('login'), code=303)
 
         return func(*args, **kwargs)
 

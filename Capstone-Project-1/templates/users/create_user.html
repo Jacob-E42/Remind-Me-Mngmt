@@ -1,4 +1,6 @@
 {% extends 'index.html' %} {%block content%}
+
+<h4 class="header-4">Create User</h4>
 <form action="{{url_for('create_user')}}" method="post">
 	{{ form.hidden_tag() }}
 	<!--add type=hidden form fields -->
@@ -10,6 +12,6 @@
 	{% endfor %}
 
 	<button class="btn btn-primary" type="submit">Create User</button>
-	<a class="btn btn-info" href="{{url_for('show_homepage')}}">Back</a>
+	<a class="btn btn-info" href="{{url_for('show_all_users')}}">Back</a>
 </form>
 {%endblock%}

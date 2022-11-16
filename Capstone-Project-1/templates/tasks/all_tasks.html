@@ -49,10 +49,7 @@
 								class="btn btn-success">
 								Edit
 							</button>
-							<button
-								formaction="{{url_for('delete_task', id=task.id)}}"
-								formmethod="post"
-								class="btn btn-outline-danger">
+							<button formaction="#" class="btn btn-outline-danger delete-task-button" data-task-id="{{task.id}}">
 								Delete
 							</button>
 						</div>

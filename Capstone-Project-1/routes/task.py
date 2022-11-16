@@ -27,19 +27,20 @@ def show_create_task_form():
 def create_task():
     form = CreateTaskForm(obj=request.data)
     if form.validate_on_submit():
-
         data = {k: v for k, v in form.data.items() if k != "csrf_token"}
         new_task = Task(created_by=current_user.id, **data)
         db.session.add(new_task)
         db.session.commit()
-
-
         flash("New Task Created!", "success")
         return redirect(url_for('show_all_tasks'))
-    return redirect(url_for('show_create_task_form'))
+    for field in form:
+        for error in field.errors:
+            flash(error, "danger")
+    return redirect(url_for('show_create_task_form'), code=303)
     
 
 @app.route("/tasks/<int:id>", methods=["GET"])
+@login_required
 def show_task(id):
     task = Task.query.get_or_404(id)
     users = task.users
@@ -77,14 +78,14 @@ def edit_task(id):
     return url_for('show_edit_task_form', id=id)
 
 
-@app.route("/tasks/<int:id>/delete", methods=["POST", "DELETE"])
+@app.route("/tasks/<int:id>", methods=["DELETE"])
 @admin_required
 def delete_task(id):
     task = Task.query.get_or_404(id)
     db.session.delete(task)
     db.session.commit()
     flash("Task deleted!", "danger")
-    return redirect(url_for('show_all_tasks'))
+    return url_for('show_all_tasks')
 
 # make accessable only if the task is assigned
 @app.route("/tasks/<int:id>/completed/<int:user>", methods=["POST"])

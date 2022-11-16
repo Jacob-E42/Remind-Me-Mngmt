@@ -17,7 +17,6 @@ def connect_db(app):
     db.init_app(app)
 
 class User(db.Model, UserMixin):
-
      
     __tablename__ = "users"
 
@@ -30,8 +29,6 @@ class User(db.Model, UserMixin):
     phone = db.Column(db.Text, nullable=False)
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     is_admin = db.Column(db.Boolean, nullable=False, default=False)
-
-    assignments = db.relationship("Assignment")
 
     def __repr__(self):
         
@@ -64,6 +61,7 @@ class User(db.Model, UserMixin):
             return new_user
         else:
             return False
+
     @classmethod
     def authenticate(cls, username, pwd):
         """Validate that user exists & password is correct.
@@ -81,31 +79,9 @@ class User(db.Model, UserMixin):
         else:
             return (False, "The password provided is incorrect")
     
-
-
-class Assignment(db.Model):
-
-    __tablename__ = "assignments"
-
-
-    # id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    assigner_id = db.Column(db.Integer, nullable=False)
-    assignee_id = db.Column(db.Integer,  db.ForeignKey("users.id", ondelete="CASCADE"), primary_key=True, nullable=False)
-    task_id = db.Column(db.Integer, db.ForeignKey("tasks.id", ondelete="CASCADE"), primary_key=True, nullable=False)
-    remind_daily = db.Column(db.Boolean, nullable=False, default=True)
-    notify_admin = db.Column(db.Boolean, nullable=False, default=True)
-
-    task = db.relationship("Task", back_populates="assignments")
- 
-    def __repr__(self):
-        
-        return f" {self.assignee_id} {self.task_id} {self.remind_daily} {self.notify_admin} "
-
 class Task(db.Model):
 
-    
     __tablename__ = "tasks"
-
 
     id = db.Column(db.Integer, primary_key=True, autoincrement='ignore_fk')
     is_completed = db.Column(db.Boolean, nullable=False, default=False)
@@ -113,14 +89,31 @@ class Task(db.Model):
     title = db.Column(db.String(180), nullable=False)
     description = db.Column(db.Text)
     due_time  = db.Column(db.DateTime, nullable=False)
-    created_by = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="CASCADE"), nullable=False )
+    created_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False )
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     time_completed = db.Column(db.DateTime, server_onupdate=db.func.now())
 
-    
-    users = db.relationship("User", secondary="assignments", backref="tasks", cascade="all,delete")
-    assignments = db.relationship("Assignment", back_populates="task", cascade="all,delete")
+    assignments = db.relationship("Assignment", cascade="all, delete-orphan")
+    users = db.relationship("User", viewonly=True, secondary="assignments", backref="tasks")
 
     def __repr__(self):
         
         return f" {self.id} {self.title} {self.due_time} {self.is_completed}"
+        
+class Assignment(db.Model):
+
+    __tablename__ = "assignments"
+
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    assigner_id = db.Column(db.Integer, nullable=False)
+    assignee_id = db.Column(db.Integer,  db.ForeignKey("users.id"), nullable=False)
+    task_id = db.Column(db.Integer, db.ForeignKey("tasks.id"),  nullable=False)
+    remind_daily = db.Column(db.Boolean, nullable=False, default=True)
+    notify_admin = db.Column(db.Boolean, nullable=False, default=True)
+
+    # task = db.relationship("Task", back_populates="assignments")
+    # user = db.relationship("User", backref="assignments")
+    def __repr__(self):
+        
+        return f" {self.assignee_id} {self.task_id} {self.remind_daily} {self.notify_admin} "
