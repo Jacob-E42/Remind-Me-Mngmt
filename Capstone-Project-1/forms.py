@@ -53,24 +53,24 @@ class EditTaskForm(FlaskForm):
   due_time = DateTimeField("Time Due", format='%Y-%m-%d', validators=[DataRequired(message="A due time is required")])
   is_completed = BooleanField("Completed")
 
-class AssignUserForm(FlaskForm):
+class AssignTaskForm(FlaskForm):
   assignee_id = SelectField("Assign To", coerce=int)
   remind_daily = BooleanField("Remind Daily")
   notify_admin = BooleanField("Notify Admin When Completed")
 
-class AssignTaskForm(FlaskForm):
+class AssignUserForm(FlaskForm):
   task_id = SelectField("Assign Task", coerce=int)
   remind_daily = BooleanField("Remind Daily")
   notify_admin = BooleanField("Notify Admin When Completed")
 
 class EditTaskAssignmentForm(FlaskForm):
   
-  remind_daily = BooleanField("Remind Daily", false_values=(False, "false", "n", ""))
-  notify_admin = BooleanField("Notify Admin When Completed", false_values=(False, "false", "n", ""))
+  remind_daily = BooleanField("Remind Daily")
+  notify_admin = BooleanField("Notify Admin When Completed")
 
 class EditUserAssignmentForm(FlaskForm):
 
-  remind_daily = BooleanField("Remind Daily", false_values=(False, "false", "n", ""))
-  notify_admin = BooleanField("Notify Admin When Completed", false_values=(False, "false", "n", ""))
+  remind_daily = BooleanField("Remind Daily")
+  notify_admin = BooleanField("Notify Admin When Completed")
 
  

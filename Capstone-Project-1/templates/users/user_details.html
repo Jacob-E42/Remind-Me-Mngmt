@@ -38,8 +38,10 @@
 					<div class="row">
 						<div class="col">
 							<button
-								formaction="{{url_for('edit_completed_status', id=task.id, user=user.id)}}"
-								class="btn btn-primary">
+								formaction="{{url_for('edit_completed_status', id=task.id)}}"
+								class="btn btn-primary completion-status-button"
+								data-admin-id="{{current_user.id}}"
+								data-task-id="{{task.id}}">
 								Mark complete
 							</button>
 							<button
@@ -52,10 +54,14 @@
 								Reassign
 							</button>
 							<button class="btn btn-warning" formaction="{{url_for('remind_for_task', task_id=task.id)}}">
-								Remove Assignment
-							</button>
-							<button class="btn btn-warning" formaction="{{url_for('remind_for_task', task_id=task.id)}}">
 								Remind
+							</button>
+							<button
+								class="btn btn-danger delete-assignment-button"
+								data-task-id="{{task.id}}"
+								data-user-id="{{user.id}}"
+								formaction="{{url_for('remind_for_task', task_id=task.id)}}">
+								Delete Assignment
 							</button>
 						</div>
 					</div>

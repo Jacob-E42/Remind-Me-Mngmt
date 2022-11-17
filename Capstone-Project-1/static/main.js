@@ -87,7 +87,6 @@ $(".delete-task-button").on("click", async function (evt) {
 });
 
 $("input[type=checkbox]").ready(async function () {
-	console.debug("checkbox, on load");
 	$("#remind_daily").val("");
 	$("#notify_admin").val("");
 });
@@ -123,9 +122,46 @@ $(".edit-user-assignment-button").on("click", async function (evt) {
 	window.location.replace(`${BASE_URL}/${resp.data}`);
 });
 
-$(function (evt) {
+$(".edit-task-assignment-button").on("click", async function (evt) {
+	evt.preventDefault();
+	console.debug("EditUserAssignmentButton: onSubmit");
+
+	const target = $(evt.target);
+	const user_id = target.data("user-id");
+	const task_id = target.data("task-id");
+
+	let csrf_token = $("#csrf_token").val();
 	let remind_daily = $("#remind_daily").val();
 	let notify_admin = $("#notify_admin").val();
-	console.debug("starting values");
-	console.log(remind_daily, notify_admin);
+
+	let assignment = {
+		csrf_token: csrf_token,
+		remind_daily: remind_daily,
+		notify_admin: notify_admin
+	};
+
+	const resp = await axios.patch(`${BASE_URL}/assignments/tasks/${task_id}/${user_id}`, assignment);
+	window.location.replace(`${BASE_URL}/${resp.data}`);
+});
+
+$(".delete-assignment-button").on("click", async function (evt) {
+	evt.preventDefault();
+	console.debug("DeleteAssignmentButton: onClick");
+	const target = $(evt.target);
+	const task_id = target.data("task-id");
+	const user_id = target.data("user-id");
+
+	const resp = await axios.delete(`${BASE_URL}/assignments/${user_id}/${task_id}`);
+
+	location.reload();
+});
+
+$(".completion-status-button").on("click", async function (evt) {
+	console.debug("completion status button");
+	const target = $(evt.target);
+	const admin_id = target.data("admin-id");
+	const task_id = target.data("task-id");
+
+	const resp = await axios.post(`${BASE_URL}/notify/${task_id}/${admin_id}`);
+	console.log(resp);
 });

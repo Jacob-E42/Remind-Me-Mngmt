@@ -44,9 +44,8 @@ def create_task():
 @login_required
 def show_task(id):
     task = Task.query.get_or_404(id)
-    users = task.users
-    
-    return render_template("tasks/task_details.html", task=task, users=users)
+    assignments = task.assignments
+    return render_template("tasks/task_details.html", task=task, assignments=assignments)
 
 
 @app.route("/tasks/<int:id>/update", methods=["GET"])
@@ -88,15 +87,15 @@ def delete_task(id):
     return url_for('show_all_tasks')
 
 # make accessable only if the task is assigned
-@app.route("/tasks/<int:id>/completed/<int:user>", methods=["POST"])
+@app.route("/tasks/<int:id>/completed", methods=["POST"])
 @login_required
-def edit_completed_status(id, user):
+def edit_completed_status(id):
     task = Task.query.get_or_404(id)
     task.is_completed = not task.is_completed
     db.session.add(task)
     db.session.commit()
     flash("Status changed", "success")
-    return redirect(url_for('notify_admin', task_id=id, user_id=user), code=307)
+    return redirect(url_for('show_all_tasks'))
 
 @app.route("/tasks/upcoming", methods=["GET"])
 def show_upcoming_tasks():

@@ -13,6 +13,8 @@
 			<a href="{{url_for('show_edit_task_form', id=task.id)}}" class="btn btn-secondary">Edit</a>
 			<form action="{{url_for('remind_for_task', task_id=task.id)}}" method="post" class="d-inline-block">
 				<button class="btn btn-warning">Remind</button>
+
+				<button formaction="{{url_for('edit_completed_status', id=task.id)}}" class="btn btn-primary">Mark complete</button>
 			</form>
 			<button class="d-inline-block btn btn-danger delete-task-button" data-task-id="{{task.id}}">Delete</button>
 		</div>
@@ -21,30 +23,41 @@
 <div class="container">
 	<ul>
 		<h3 class="header-4">Assigned Users</h3>
-		{% for user in users%}
 
+		{% for assignment in assignments%} {% with user = assignment.user%}
 		<li class="card">
 			<div class="card-body">
 				<div class="card-title">
 					<h4>
 						<span class="badge text-bg-dark fw-bold">{{user.first_name}} {{user.last_name}}</span>
-						<!-- <span class="badge bg-secondary fw-semibold">Assigned by: </span> -->
-						<span class="m-3 fw-semibold"></span>
+						<span class="badge text-dark">Remind Daily: {{assignment.remind_daily}}</span>
+						<span class="badge text-dark">Notify Admin: {{assignment.notify_admin}}</span>
 					</h4>
 				</div>
 				<form class="card-text" action="#" method="post">
 					<div class="row">
 						<div class="col">
-							<a href="{{url_for('show_edit_user_form', id=user.id)}}" class="btn btn-success">Edit</a>
-							<button href="#" formaction="{{url_for('delete_task', id=task.id)}}" class="btn btn-outline-danger">
-								Delete
+							<button
+								class="btn btn-secondary"
+								formaction="{{url_for('show_edit_task_assignment',task_id=task.id, user_id=user.id)}}"
+								formmethod="get">
+								Edit Assignment
+							</button>
+							<button class="btn btn-info" formaction="{{url_for('assign_user_to_task', id=task.id)}}" formmethod="get">
+								Reassign
+							</button>
+							<button class="btn btn-warning" formaction="{{url_for('remind_for_task', task_id=task.id)}}">
+								Remove Assignment
+							</button>
+							<button class="btn btn-warning" formaction="{{url_for('remind_for_task', task_id=task.id)}}">
+								Remind
 							</button>
 						</div>
 					</div>
 				</form>
 			</div>
 		</li>
-		{%endfor%}
+		{%endwith%} {%endfor%}
 	</ul>
 </div>
 

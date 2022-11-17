@@ -44,12 +44,11 @@ def remind_user(user_id):
     return redirect(url_for('show_user_details', id=user_id))
 
 
-@app.route("/notify/<int:task_id>/<int:user_id>", methods=["POST"])
-def notify_admin(task_id, user_id):
-    print("You are in notify")
+@app.route("/notify/<int:task_id>/<int:admin_id>", methods=["POST"])
+def notify_admin(task_id, admin_id):
+    print(task_id, admin_id)
     task = Task.query.get_or_404(task_id)
-    assignment = Assignment.query.filter_by(task_id=task_id, assignee_id=user_id).first()
-    admin= User.query.get_or_404(assignment.assigner_id)
+    admin= User.query.get_or_404(admin_id)
     body = generate_body(admin, "notify", task)
     reminder = send_sms(admin.phone, body)
     flash("You sent a notification!", "success")

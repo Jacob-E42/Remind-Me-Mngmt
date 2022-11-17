@@ -1,0 +1,23 @@
+{% extends 'index.html' %} {%block content%}
+<h1 class="display-3">Edit Assignment</h1>
+
+<div class="container">
+	<form action="#" method="post">
+		<p class="fw-bold header-6">{{user.first_name}} {{user.last_name}}</p>
+		<p class="fw-bold header-6">Assigned Task: {{task.title}}</p>
+		{{ form.hidden_tag() }}
+		<!--add type=hidden form fields -->
+
+		<p>{{ form.remind_daily.label }} {{form.remind_daily}} {% for error in form.remind_daily.errors %} {{ error }} {% endfor %}</p>
+		<p>{{ form.notify_admin.label }} {{form.notify_admin}} {% for error in form.notify_admin.errors %} {{ error }} {% endfor %}</p>
+		<button
+			class="btn btn-primary edit-task-assignment-button"
+			type="submit"
+			data-user-id="{{user.id}}"
+			data-task-id="{{task.id}}">
+			Submit
+		</button>
+		<a class="btn btn-info" href="{{url_for('show_user', id=user.id)}}">Back</a>
+	</form>
+</div>
+{%endblock%}
