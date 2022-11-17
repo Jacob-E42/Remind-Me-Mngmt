@@ -1,5 +1,6 @@
 from app import app
 from routes.login import admin_required, load_user
+from routes.helpers import get_assignment
 from models import db, User, Task, Assignment
 from forms import  AssignUserForm,  AssignTaskForm, EditTaskAssignmentForm, EditUserAssignmentForm
 from flask import Flask, request, redirect, render_template, session, flash, url_for, abort, jsonify
@@ -39,33 +40,31 @@ def assign_task_to_user(id):
 @app.route("/assignments/users/<int:user_id>/<int:task_id>", methods=["GET"])
 def show_edit_user_assignment(user_id, task_id):
     user = User.query.get_or_404(user_id)
-    assignment = Assignment.query.filter_by(assignee_id=user_id, task_id=task_id).first()
-    form = EditUserAssignmentForm(obj=assignment)
-    form.task_id.choices = [(task.id, task.title) for task in Task.query.all()]
-  
-    return render_template("assignments/edit_user_assignment.html", form=form, user=user)
+    task = Task.query.get_or_404(task_id)
+    form = EditUserAssignmentForm()
+    return render_template("assignments/edit_user_assignment.html", form=form, user=user, task=task)
 
 @app.route("/assignments/users/<int:user_id>/<int:task_id>", methods=["PUT", "PATCH"])
+@admin_required
 def edit_user_assignment(user_id, task_id):
+    assignment = get_assignment(user_id, task_id)
     form = EditUserAssignmentForm(obj=request.data)
-    assignment = Assignment.query.filter_by(assignee_id=user_id, task_id=task_id).first()
     form.is_submitted()
     if form.validate():
-        data = {k: v for k, v in form.data.items() if k != "csrf_token"}
-        for (k, v) in data.items():
-            setattr(assignment, k, v)
+        assignment.remind_daily = form.remind_daily.data
+        assignment.notify_admin = form.notify_admin.data
         db.session.add(assignment)
         db.session.commit()
         flash("Assignment updated!", "success")
         return url_for('show_user', id=user_id)
-
+    flash("error")
     for field in form:
         for error in field.errors:
             flash(error, "danger")
     return url_for('show_edit_user_assignment', task_id=task_id, user_id=user_id)
 
 
-@app.route("/assignments/tasks/<int:id>", methods=["POST"])
+@app.route("/assignments/tasks/<int:id>", methods=["GET","POST"])
 @admin_required
 def assign_user_to_task(id):
     form = AssignUserForm()
@@ -93,7 +92,7 @@ def assign_user_to_task(id):
         #         db.session.commit()
         #         flash("Assignment deleted", "success")
         return redirect(url_for('show_all_tasks'))
-    return render_template("assignments/create_user_assignment.html", form=form, task=task)
+    return render_template("assignments/create_task_assignment.html", form=form, task=task)
 
 @app.route("/assignments/tasks/<int:id>", methods=["PUT", "PATCH"])
 def edit_task_assignments(id):

@@ -93,11 +93,10 @@ class Task(db.Model):
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     time_completed = db.Column(db.DateTime, server_onupdate=db.func.now())
 
-    assignments = db.relationship("Assignment", cascade="all, delete-orphan")
+    assignments = db.relationship("Assignment", backref="task", cascade="all, delete-orphan")
     users = db.relationship("User", viewonly=True, secondary="assignments", backref="tasks")
 
     def __repr__(self):
-        
         return f" {self.id} {self.title} {self.due_time} {self.is_completed}"
         
 class Assignment(db.Model):
@@ -109,11 +108,10 @@ class Assignment(db.Model):
     assigner_id = db.Column(db.Integer, nullable=False)
     assignee_id = db.Column(db.Integer,  db.ForeignKey("users.id"), nullable=False)
     task_id = db.Column(db.Integer, db.ForeignKey("tasks.id"),  nullable=False)
-    remind_daily = db.Column(db.Boolean, nullable=False, default=True)
-    notify_admin = db.Column(db.Boolean, nullable=False, default=True)
+    remind_daily = db.Column(db.Boolean,  default=False)
+    notify_admin = db.Column(db.Boolean,  default=False)
 
     # task = db.relationship("Task", back_populates="assignments")
-    # user = db.relationship("User", backref="assignments")
+    user = db.relationship("User", backref="assignments")
     def __repr__(self):
-        
-        return f" {self.assignee_id} {self.task_id} {self.remind_daily} {self.notify_admin} "
+        return f" User: {self.assignee_id} Task: {self.task_id} {self.remind_daily} {self.notify_admin} "

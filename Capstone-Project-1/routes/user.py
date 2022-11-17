@@ -25,9 +25,10 @@ def show_user(id):
     if id == 0:
         return redirect('login')
     user = User.query.get_or_404(id)
-    tasks = user.tasks
+    assignments = user.assignments
+    print(assignments)
 
-    return render_template("users/user_details.html", user=user, tasks=tasks)
+    return render_template("users/user_details.html", user=user, assignments=assignments)
 
 #deprecated
 # @app.route("/users/my_tasks", methods=["GET"])

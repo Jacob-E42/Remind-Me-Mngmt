@@ -1,6 +1,6 @@
 from app import app
 from functools import wraps
-from models import db, User,  Task
+from models import db, User, Task, Assignment
 from secret import ACCOUNT_SID, TEST_AUTH_TOKEN, AUTH_TOKEN, SERVICE_SID
 from flask import Flask, request, redirect, render_template, session, flash, url_for, abort
 from flask_login import current_user
@@ -22,6 +22,12 @@ def is_safe_url(target):
     test_url = urlparse(urljoin(request.host_url, target))
     return test_url.scheme in ('http', 'https') and \
         ref_url.netloc == test_url.netloc
+
+def get_assignment(user_id, task_id):
+    if user_id and task_id:
+        return Assignment.query.filter_by(assignee_id=user_id, task_id=task_id).first()
+    return None
+
 
 
 

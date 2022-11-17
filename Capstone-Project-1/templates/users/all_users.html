@@ -9,11 +9,11 @@
 		{%for user in users%}
 
 		<li>
-			<a href="{{ url_for('show_user_details', id=user.id) }}">
+			<a href="{{ url_for('show_user', id=user.id) }}">
 				<div class="card container">
 					<div class="card-body">
 						<h5 class="card-title text-dark text-decoration-none">
-							<!-- <a href="{{ url_for('show_user_details', id=user.id) }}" class="text-dark text-decoration-none"> -->
+							<!-- <a href="{{ url_for('show_user', id=user.id) }}" class="text-dark text-decoration-none"> -->
 							{{user.first_name}} {{user.last_name}}
 							<!-- </a> -->
 						</h5>

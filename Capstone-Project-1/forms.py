@@ -54,23 +54,23 @@ class EditTaskForm(FlaskForm):
   is_completed = BooleanField("Completed")
 
 class AssignUserForm(FlaskForm):
-  assignee_id = SelectMultipleField("Assign To", coerce=int, validators=[])
-  remind_daily = BooleanField("Remind Daily", validators=[])
-  notify_admin = BooleanField("Notify Admin When Completed", validators=[])
+  assignee_id = SelectField("Assign To", coerce=int)
+  remind_daily = BooleanField("Remind Daily")
+  notify_admin = BooleanField("Notify Admin When Completed")
 
 class AssignTaskForm(FlaskForm):
-  task_id = SelectMultipleField("Assign Task", coerce=int, validators=[])
-  remind_daily = BooleanField("Remind Daily", validators=[])
-  notify_admin = BooleanField("Notify Admin When Completed", validators=[])
+  task_id = SelectField("Assign Task", coerce=int)
+  remind_daily = BooleanField("Remind Daily")
+  notify_admin = BooleanField("Notify Admin When Completed")
 
 class EditTaskAssignmentForm(FlaskForm):
-  assignee_id = SelectMultipleField("Assign To", coerce=int, validators=[])
-  remind_daily = BooleanField("Remind Daily", validators=[])
-  notify_admin = BooleanField("Notify Admin When Completed", validators=[])
+  
+  remind_daily = BooleanField("Remind Daily", false_values=(False, "false", "n", ""))
+  notify_admin = BooleanField("Notify Admin When Completed", false_values=(False, "false", "n", ""))
 
 class EditUserAssignmentForm(FlaskForm):
-  task_id = SelectMultipleField("Assign Task", coerce=int, validators=[])
-  remind_daily = BooleanField("Remind Daily", validators=[])
-  notify_admin = BooleanField("Notify Admin When Completed", validators=[])
+
+  remind_daily = BooleanField("Remind Daily", false_values=(False, "false", "n", ""))
+  notify_admin = BooleanField("Notify Admin When Completed", false_values=(False, "false", "n", ""))
 
  

@@ -19,7 +19,7 @@
 </div>
 <div class="container">
 	<ul>
-		{% for task in tasks %}
+		{% for assignment in assignments %} {% with task = assignment.task %}
 
 		<li class="card">
 			<div class="card-body">
@@ -30,6 +30,8 @@
 						</span>
 						<span class="badge bg-secondary fw-semibold">{{task.due_time}}</span>
 						<span class="m-3 fw-semibold">{%if task.is_completed%}Completed{%else%}Incomplete{%endif%}</span>
+						<span class="badge text-dark">Remind Daily: {{assignment.remind_daily}}</span>
+						<span class="badge text-dark">Notify Admin: {{assignment.notify_admin}}</span>
 					</h4>
 				</div>
 				<form class="card-text" action="#" method="post">
@@ -42,7 +44,7 @@
 							</button>
 							<button
 								class="btn btn-secondary"
-								formaction="{{url_for('show_edit_user_assignment',user_id=user.id, task_id=task.id)}}"
+								formaction="{{url_for('show_edit_user_assignment', user_id=user.id, task_id=task.id)}}"
 								formmethod="get">
 								Edit Assignment
 							</button>
@@ -60,7 +62,7 @@
 				</form>
 			</div>
 		</li>
-		{%endfor%}
+		{%endwith%} {%endfor%}
 	</ul>
 </div>
 <div class="container">
