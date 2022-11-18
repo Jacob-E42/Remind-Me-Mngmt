@@ -37,12 +37,6 @@ def assign_task_to_user(id):
             db.session.commit()
             flash("Assignment Created!", "success")
             return redirect(url_for('show_user', id=id))
-        # for task in assigned_task_ids:
-        #     if task not in task_choices:
-        #         assignment = Assignment.query.filter_by(task_id=task).first()
-        #         db.session.delete(assignment)
-        #         db.session.commit()
-        #         flash("Assignment deleted", "success")
         
     for field in form:
         for error in field.errors:
@@ -76,18 +70,26 @@ def edit_user_assignment(user_id, task_id):
             flash(error, "danger")
     return url_for('show_edit_user_assignment', task_id=task_id, user_id=user_id)
 
+@app.route("/assignments/tasks/<int:id>", methods=["GET"])
+@admin_required
+def show_assign_task_form(id):
+    form = AssignTaskForm()
+    task = Task.query.get(id)
+    form.assignee_id.choices = [(u.id, u.first_name + " " + u.last_name) for u in User.query.all()]
+    session["assigned_user_ids"] = [user.id for user in task.users]
+    session["user_choices"] = form.assignee_id.choices
+    return render_template("assignments/create_task_assignment.html", form=form, task=task)
 
-@app.route("/assignments/tasks/<int:id>", methods=["GET","POST"])
+@app.route("/assignments/tasks/<int:id>", methods=["POST"])
 @admin_required
 def assign_user_to_task(id):
-    form = AssignUserForm()
+    form = AssignTaskForm(obj=request.data)
     task = Task.query.get(id)
-    assigned_user_ids = [user.id for user in task.users]
-    form.assignee_id.choices = [(u.id, u.first_name + " " + u.last_name) for u in User.query.all()]
+    assigned_user_ids = session["assigned_user_ids"]
+    form.assignee_id.choices = session["user_choices"]
 
     if form.validate_on_submit():
-        form_data = {k: v for k, v in form.data.items(
-        ) if k != "csrf_token" and k != "assignee_id"}
+        form_data = {k: v for k, v in form.data.items() if k != "csrf_token" and k != "assignee_id"}
         data = {"assigner_id": current_user.id, "task_id": id, **form_data}
         assignee = form.assignee_id.data
 
@@ -96,15 +98,12 @@ def assign_user_to_task(id):
             db.session.add(new_assignment)
             db.session.commit()
             flash("Assignment Created!", "success")
-        # for assignee in assigned_user_ids:
-        #     if assignee not in assignee_choices:
-        #         assignment = Assignment.query.filter_by(
-        #             assignee_id=assignee, task_id=task.id).first()
-        #         db.session.delete(assignment)
-        #         db.session.commit()
-        #         flash("Assignment deleted", "success")
         return redirect(url_for('show_all_tasks'))
-    return render_template("assignments/create_task_assignment.html", form=form, task=task)
+    for field in form:
+        for error in field.errors:
+            flash(error, "danger")
+    return redirect(url_for('show_assign_user_form', id=id))
+    
 
 @app.route("/assignments/tasks/<int:task_id>/<int:user_id>", methods=["GET"])
 @login_required

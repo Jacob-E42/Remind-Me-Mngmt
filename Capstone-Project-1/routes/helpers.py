@@ -6,6 +6,7 @@ from flask import Flask, request, redirect, render_template, session, flash, url
 from flask_login import current_user
 from twilio.rest import Client
 
+
 def admin_required(func):
     @wraps(func)
     def validate_is_admin(*args, **kwargs):
@@ -16,6 +17,13 @@ def admin_required(func):
         return func(*args, **kwargs)
 
     return validate_is_admin
+
+@app.route("/templates", methods=["GET", "POST"])
+@admin_required
+def generate_flask_html_template():
+    html = request.data
+    print(html, request.form["data"], request.files, request.json["data"])
+    return render_template(html)
 
 def is_safe_url(target):
     ref_url = urlparse(request.host_url)
@@ -28,6 +36,22 @@ def get_assignment(user_id, task_id):
         return Assignment.query.filter_by(assignee_id=user_id, task_id=task_id).first()
     return None
 
+def get_user_assignments(user_id):
+    if user_id:
+        return Assignment.query.filter_by(assignee_id=user_id).all()
+    return None
+
+def get_users_completed_tasks(user_id):
+    if user_id:
+        users_assignments = get_user_assignments(user_id)
+        return [assignment.task for assignment in users_assignments if assignment.task.is_completed]
+    return None
+
+def get_users_incomplete_tasks(user_id):
+    if user_id:
+        users_assignments = get_user_assignments(user_id)
+        return [assignment.task for assignment in users_assignments if assignment.task.is_completed is False]
+    return None
 
 
 

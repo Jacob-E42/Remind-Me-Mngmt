@@ -165,3 +165,73 @@ $(".completion-status-button").on("click", async function (evt) {
 	const resp = await axios.post(`${BASE_URL}/notify/${task_id}/${admin_id}`);
 	console.log(resp);
 });
+
+$(".completed-tasks-button").on("click", async function (evt) {
+	console.debug("Show Completed Tasks: 'click'");
+	const user_id = $(".completed-tasks-button").data("user-id");
+	const resp = await axios.get(`${BASE_URL}/tasks/${user_id}/completed`);
+	completed_tasks = resp.data;
+	if (completed_tasks.lenth === 0) return;
+	for (let i = 0; i < completed_tasks.length; i++) {
+		console.log("completed task: ", completed_tasks[i]);
+		html = htmlGenerator(completed_tasks[i], "completed-task");
+
+		// const respHtml = await axios.post(`${BASE_URL}/templates`, {
+		// 	headers: { "Content-Type": "application/json" },
+		// 	data: { html: html }
+		// });
+		// console.log(respHtml);
+		$("#completed-tasks-list").append(html);
+		$("#completed-tasks-container").removeClass("d-none");
+	}
+});
+
+function htmlGenerator(obj, code) {
+	if (code === "completed-task") {
+		return `<li class="card">
+		<div class="card-body">
+			<div class="card-title">
+				<h4>
+					<span class="badge text-bg-dark fw-bold">
+						<a href="{{url_for('show_task', id=task.id)}}" class="">${obj.title}</a>
+					</span>
+					<span class="badge bg-secondary fw-semibold">${obj.due_time}</span>
+					<span class="m-3 fw-semibold">${obj.is_completed ? "Complete" : "Incomplete"}</span>
+				</h4>
+			</div>
+			<form class="card-text" action="#" method="post">
+				<div class="row">
+					<div class="col">
+						<button
+							formaction="{{url_for('edit_completed_status', id=task.id)}}"
+							class="btn btn-primary completion-status-button"
+							data-admin-id="{{current_user.id}}"
+							data-task-id="${obj.id}">
+							Mark complete
+						</button>
+						<button
+							class="btn btn-secondary"
+							formaction="{{url_for('show_edit_user_assignment', user_id=user.id, task_id=task.id)}}"
+							formmethod="get">
+							Edit Assignment
+						</button>
+						<button class="btn btn-info" formaction="{{url_for('assign_user_to_task', id=task.id)}}" formmethod="get">
+							Reassign
+						</button>
+						<button class="btn btn-warning" formaction="{{url_for('remind_for_task', task_id=task.id)}}">
+							Remind
+						</button>
+						<button
+							class="btn btn-danger delete-assignment-button"
+							data-task-id="{{task.id}}"
+							data-user-id="{{user.id}}"
+							formaction="{{url_for('remind_for_task', task_id=task.id)}}">
+							Delete Assignment
+						</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</li>`;
+	}
+}

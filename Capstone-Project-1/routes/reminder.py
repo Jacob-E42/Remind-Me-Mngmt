@@ -41,7 +41,7 @@ def remind_user(user_id):
     body = generate_body(user, "user")
     reminder = send_sms(user.phone, body)
     flash("You sent a reminder!", "success")
-    return redirect(url_for('show_user_details', id=user_id))
+    return redirect(url_for('show_user', id=user_id))
 
 
 @app.route("/notify/<int:task_id>/<int:admin_id>", methods=["POST"])

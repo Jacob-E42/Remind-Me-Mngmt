@@ -3,7 +3,7 @@ from routes.login import admin_required, login_required
 
 from models import db, Task, Assignment, User
 from forms import CreateTaskForm, EditTaskForm, AssignTaskForm, AssignUserForm
-from flask import Flask, request, redirect, render_template, session, flash, url_for, abort
+from flask import Flask, request, redirect, render_template, session, flash, url_for, abort, jsonify
 from flask_login import current_user
 
 
@@ -97,16 +97,21 @@ def edit_completed_status(id):
     flash("Status changed", "success")
     return redirect(url_for('show_all_tasks'))
 
-@app.route("/tasks/upcoming", methods=["GET"])
+@app.route("/tasks/<int:user_id>/upcoming", methods=["GET"])
 def show_upcoming_tasks():
+    incomplete_tasks = get_users_incomplete_tasks(user_id)
     return "You didn't implement me yet!"
 
 
-@app.route("/tasks/incomplete", methods=["GET"])
+@app.route("/tasks/<int:user_id>/incomplete", methods=["GET"])
 def show_incomplete_tasks():
+    incomplete_tasks = get_users_incomplete_tasks(user_id)
     return "You didn't implement me yet!"
 
 
-@app.route("/tasks/completed", methods=["GET"])
-def show_completed_tasks():
-    return "You didn't implement me yet!"
+@app.route("/tasks/<int:user_id>/completed", methods=["GET"])
+def show_completed_tasks(user_id):
+    """returns array of serialized JSON object representations of all completed tasks"""
+    
+    completed_tasks = get_users_completed_tasks(user_id)
+    return jsonify(completed_tasks)

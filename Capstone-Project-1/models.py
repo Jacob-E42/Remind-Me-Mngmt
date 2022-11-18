@@ -47,16 +47,24 @@ class User(db.Model, UserMixin):
     def change_admin(self):
         self.is_admin = not self.is_admin
 
+    def serialize(self):
+
+        return {"id": self.id,
+        "first_name ": self.first_name,
+        "last_name": self.last_name,
+        "username": self.username,
+        "password": self.password,
+        "email": self.email,
+        "phone": self.phone,
+        "created_at": self.created_at,
+        "is_admin": self.is_admin}
+
     @classmethod
     def register(cls, pwd, data):
-
         hashed = bcrypt.generate_password_hash(pwd, rounds=14)
-
         # turn bytestring into normal (unicode utf8) string
         hashed_utf8 = hashed.decode("utf8")
-       
         new_user = cls(password=hashed_utf8, **data)
-
         if new_user:
             return new_user
         else:
@@ -68,11 +76,9 @@ class User(db.Model, UserMixin):
 
         Return user if valid; else return False.
         """
-
         u = cls.query.filter_by(username=username).first()
         if not u:
             return (False, "That is not a valid username")
-
         if bcrypt.check_password_hash(u.password, pwd):
             # return user instance
             return (u, "Logged in successfully.")
@@ -98,7 +104,19 @@ class Task(db.Model):
 
     def __repr__(self):
         return f" {self.id} {self.title} {self.due_time} {self.is_completed}"
-        
+
+    def serialize(self):
+
+        return {"id": self.id,
+        "is_completed ": self.is_completed,
+        "resp_type": self.resp_type,
+        "title": self.title,
+        "description": self.description,
+        "due_time": self.due_time,
+        "created_by": self.created_by,
+        "created_at": self.created_at,
+        "time_completed": self.time_completed}
+
 class Assignment(db.Model):
 
     __tablename__ = "assignments"
@@ -115,3 +133,12 @@ class Assignment(db.Model):
     user = db.relationship("User", backref="assignments")
     def __repr__(self):
         return f" User: {self.assignee_id} Task: {self.task_id} {self.remind_daily} {self.notify_admin} "
+    
+    def serialize(self):
+
+        return {"id": self.id,
+        "assigner_id": self.assigner_id,
+        "assignee_id": self.assignee_id,
+        "task_id": self.task_id,
+        "remind_daily": self.remind_daily,
+        "notify_admin": self.notify_admin}
