@@ -5,6 +5,7 @@ from secret import ACCOUNT_SID, TEST_AUTH_TOKEN, AUTH_TOKEN, SERVICE_SID
 from flask import Flask, request, redirect, render_template, session, flash, url_for, abort
 from flask_login import current_user
 from twilio.rest import Client
+from datetime import datetime
 
 
 def admin_required(func):
@@ -52,6 +53,24 @@ def get_users_incomplete_tasks(user_id):
         users_assignments = get_user_assignments(user_id)
         return [assignment.task for assignment in users_assignments if assignment.task.is_completed is False]
     return None
+
+def get_current_time():
+    return datetime.now()
+
+def is_past_due(task):
+    due_time = task.due_time
+    now = datetime.now()
+    if due_time < now:
+        return True
+    elif due_time > now:
+        return False
+    else: 
+        return False
+
+def is_due_today(task):
+    due_time = task.due_time
+    now = datetime.now()
+    return due_time.date() == now.date()
 
 
 

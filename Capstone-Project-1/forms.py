@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 # from routes.helpers import Unique
-from wtforms import StringField, PasswordField, EmailField, TextAreaField, RadioField, DateTimeField, BooleanField, SelectField, SelectMultipleField
+from wtforms import StringField, PasswordField, EmailField, TextAreaField, RadioField, DateTimeField, BooleanField, SelectField, SelectMultipleField, DateTimeLocalField
 from models import User, Task, Assignment, db
 from wtforms.validators import DataRequired, Email, Length, EqualTo, NumberRange, Optional, URL, AnyOf, NoneOf, Regexp
 
@@ -43,14 +43,14 @@ class CreateTaskForm(FlaskForm):
   title = StringField("Title", validators=[DataRequired(message="Title is required")])
   description = TextAreaField("Description", validators=[])
   resp_type = SelectField("Type", choices=[("personal","Personal"), ("organizational", "Organizational")])
-  due_time = DateTimeField("Time Due", format='%Y-%m-%d', validators=[DataRequired(message="A due time is required")])
+  due_time = DateTimeLocalField("Time Due", validators=[DataRequired(message="A due time is required")])
   is_completed = BooleanField("Completed")
 
 class EditTaskForm(FlaskForm):
   title = StringField("Title", validators=[DataRequired(message="Title is required")])
   description = TextAreaField("Description", validators=[])
   resp_type = SelectField("Type", choices=[("personal","Personal"), ("organizational", "Organizational")])
-  due_time = DateTimeField("Time Due", format='%Y-%m-%d', validators=[DataRequired(message="A due time is required")])
+  due_time = DateTimeLocalField("Date Due", format='%Y-%m-%dT%H:%M', validators=[DataRequired(message="A due time is required")])
   is_completed = BooleanField("Completed")
 
 class AssignTaskForm(FlaskForm):

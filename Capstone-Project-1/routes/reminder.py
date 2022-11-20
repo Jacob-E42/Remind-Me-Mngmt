@@ -1,5 +1,6 @@
 from app import app
 from routes.login import admin_required
+from routes.helpers import is_due_today
 from models import db, User, Task, Assignment
 from flask import Flask, request, redirect, render_template, url_for, flash
 from secret import ACCOUNT_SID, TEST_AUTH_TOKEN, AUTH_TOKEN, SERVICE_SID
@@ -15,6 +16,9 @@ def send_daily_reminder():
     all_users = User.query.all()
     for user in all_users:
         body = generate_body(user, "daily")
+        if not body:
+            continue
+        print("******************************",body)
         reminder = send_sms(user.phone, body)
         flash("You sent daily reminders!", "success")
     return redirect(url_for('show_all_users'))
@@ -29,7 +33,7 @@ def remind_for_task(task_id):
     for user in assigned_users:
         body = generate_body(user, "task", task)
         reminder = send_sms(user.phone, body)
-        flash("You sent a reminder about a task!", "successs")
+        flash("You sent a reminder about a task!", "success")
     return redirect(url_for('show_all_tasks'))
 
 
@@ -89,12 +93,13 @@ def generate_body(user, type, task=None):
         msg = f"Hi {user.first_name} {user.last_name}, \n the task {task.title} is now {is_complete}."
         return msg
     elif type == "daily":
-        user_assignments = [assignment for assignment in user.assignments if assignment.remind_daily]
-        if len(user_assignments) == 0:
-             return ""
+        users_assignments = [assignment for assignment in user.assignments if assignment.remind_daily and is_due_today(assignment.task)]
+        print("***************", users_assignments, user.assignments, len(users_assignments))
+        if len(users_assignments) == 0:
+             return None
         msg = f"Hi {user.first_name} {user.last_name}, here are your upcoming tasks for today:\n"
         
-        for assignment in user_assignments:
+        for assignment in users_assignments:
             string = f"The task {assignment.task.title} is due by {assignment.task.due_time}\n"
             msg += string
         return msg

@@ -186,6 +186,34 @@ $(".completed-tasks-button").on("click", async function (evt) {
 	}
 });
 
+$("#incomplete-tasks-button").on("click", async function (evt) {
+	console.debug("Show Incomplete Tasks: 'click'");
+	const user_id = $("#incomplete-tasks-button").data("user-id");
+	const resp = await axios.get(`${BASE_URL}/tasks/${user_id}/incomplete`);
+	incomplete_tasks = resp.data;
+	if (incomplete_tasks.lenth === 0) return;
+	for (let i = 0; i < incomplete_tasks.length; i++) {
+		console.log("incompleted task: ", incomplete_tasks[i]);
+		html = htmlGenerator(incomplete_tasks[i], "incomplete-task");
+		$("#incomplete-tasks-list").append(html);
+		$("#incomplete-tasks-container").removeClass("d-none");
+	}
+});
+
+$("#upcoming-tasks-button").on("click", async function (evt) {
+	console.debug("Show Upcoming Tasks: 'click'");
+	const user_id = $("#upcoming-tasks-button").data("user-id");
+	const resp = await axios.get(`${BASE_URL}/tasks/${user_id}/upcoming`);
+	upcoming_tasks = resp.data;
+	if (upcoming_tasks.lenth === 0) return;
+	for (let i = 0; i < upcoming_tasks.length; i++) {
+		console.log("completed task: ", upcoming_tasks[i]);
+		html = htmlGenerator(upcoming_tasks[i], "upcoming-task");
+		$("#upcoming-tasks-list").append(html);
+		$("#upcoming-tasks-container").removeClass("d-none");
+	}
+});
+
 function htmlGenerator(obj, code) {
 	if (code === "completed-task") {
 		return `<li class="card">

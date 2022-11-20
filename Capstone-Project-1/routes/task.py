@@ -1,6 +1,6 @@
 from app import app
 from routes.login import admin_required, login_required
-
+from routes.helpers import get_users_incomplete_tasks, is_past_due
 from models import db, Task, Assignment, User
 from forms import CreateTaskForm, EditTaskForm, AssignTaskForm, AssignUserForm
 from flask import Flask, request, redirect, render_template, session, flash, url_for, abort, jsonify
@@ -61,9 +61,11 @@ def show_edit_task_form(id):
 def edit_task(id):
     task = Task.query.get_or_404(id)
     form = EditTaskForm(obj=request.data)
+    print(form.due_time.data)
     form.is_submitted()
     if form.validate():
         data = {k: v for k, v in form.data.items() if k != "csrf_token"}
+        
         for (k, v) in data.items():
             setattr(task, k, v)
         db.session.add(task)
@@ -96,17 +98,6 @@ def edit_completed_status(id):
     db.session.commit()
     flash("Status changed", "success")
     return redirect(url_for('show_all_tasks'))
-
-@app.route("/tasks/<int:user_id>/upcoming", methods=["GET"])
-def show_upcoming_tasks():
-    incomplete_tasks = get_users_incomplete_tasks(user_id)
-    return "You didn't implement me yet!"
-
-
-@app.route("/tasks/<int:user_id>/incomplete", methods=["GET"])
-def show_incomplete_tasks():
-    incomplete_tasks = get_users_incomplete_tasks(user_id)
-    return "You didn't implement me yet!"
 
 
 @app.route("/tasks/<int:user_id>/completed", methods=["GET"])
