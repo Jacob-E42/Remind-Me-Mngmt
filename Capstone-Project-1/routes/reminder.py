@@ -48,15 +48,17 @@ def remind_user(user_id):
     return redirect(url_for('show_user', id=user_id))
 
 
-@app.route("/notify/<int:task_id>/<int:admin_id>", methods=["POST"])
-def notify_admin(task_id, admin_id):
-    print(task_id, admin_id)
+@app.route("/notify/<int:task_id>/<int:assignee_id>", methods=["POST"])
+def notify_admin(task_id, assignee_id):
     task = Task.query.get_or_404(task_id)
-    admin= User.query.get_or_404(admin_id)
-    body = generate_body(admin, "notify", task)
+    assignment = Assignment.query.filter_by(assignee_id=assignee_id, task_id=task_id).one()
+    assignee = User.query.get_or_404(assignee_id)
+    admin = User.query.get_or_404(assignment.assigner_id)
+    
+    body = generate_body(admin, "notify", task, assignee)
     reminder = send_sms(admin.phone, body)
     flash("You sent a notification!", "success")
-    return redirect(url_for('show_all_tasks'))
+    return task.serialize()
 
 
 
@@ -76,7 +78,7 @@ def send_sms(recipient, msg):
 
     return message.sid
 
-def generate_body(user, type, task=None):
+def generate_body(user, type, task=None, assignee=None):
     if type == "user":
         msg = f"Hi {user.first_name} {user.last_name}, here are your upcoming tasks:\n"
         user_tasks = user.tasks
@@ -90,7 +92,7 @@ def generate_body(user, type, task=None):
         return msg
     elif type == "notify":
         is_complete = "complete" if task.is_completed else "incomplete"
-        msg = f"Hi {user.first_name} {user.last_name}, \n the task {task.title} is now {is_complete}."
+        msg = f"Hi {user.first_name} {user.last_name}, \nThe task {task.title} is now {is_complete}.\nIt was {is_complete}d by {assignee.first_name} {assignee.last_name}"
         return msg
     elif type == "daily":
         users_assignments = [assignment for assignment in user.assignments if assignment.remind_daily and is_due_today(assignment.task)]

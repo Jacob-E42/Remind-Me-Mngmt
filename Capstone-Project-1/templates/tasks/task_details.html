@@ -4,7 +4,8 @@
 		<div class="card-body">
 			<h5 class="card-title">
 				<a href="#" class="text-dark text-decoration-none">
-					{{task.title}} - {%if task.is_completed%}Completed{%else%}Incomplete{%endif%} - Due By: {{task.due_time}}
+					{{task.title}} - {{task.id}} - {%if task.is_completed%}Completed{%else%}Incomplete{%endif%} - Due By:
+					{{task.due_time}}
 				</a>
 			</h5>
 			<p class="card-text">Description: {{task.description}}</p>
@@ -46,8 +47,12 @@
 							<button class="btn btn-info" formaction="{{url_for('assign_user_to_task', id=task.id)}}" formmethod="get">
 								Reassign
 							</button>
-							<button class="btn btn-warning" formaction="{{url_for('remind_for_task', task_id=task.id)}}">
-								Remove Assignment
+							<button
+								class="btn btn-danger delete-assignment-button"
+								data-task-id="{{task.id}}"
+								data-user-id="{{user.id}}"
+								formaction="{{url_for('delete_assignment', user_id=user.id, task_id=task.id)}}">
+								Delete Assignment
 							</button>
 							<button class="btn btn-warning" formaction="{{url_for('remind_for_task', task_id=task.id)}}">
 								Remind

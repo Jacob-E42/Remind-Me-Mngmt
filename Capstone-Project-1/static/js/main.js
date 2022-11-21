@@ -32,7 +32,7 @@ const $remindUserButton = $(".remind-user-button");
 
 async function start() {
 	console.debug("start");
-	hideLoggedInUserComponents();
+	await hideLoggedInUserComponents();
 	let isLoggedIn = checkForLoggedInUser();
 	let isAdmin;
 	if ($currentUserIsAdmin) isAdmin = JSON.parse($currentUserIsAdmin.toLowerCase());
@@ -43,7 +43,7 @@ async function start() {
 
 $(start);
 
-$(".edit-user-button").on("click", async function (evt) {
+$editUserButton.on("click", async function (evt) {
 	evt.preventDefault();
 	console.debug("EditUserButton: onSubmit");
 
@@ -71,7 +71,7 @@ $(".edit-user-button").on("click", async function (evt) {
 	window.location.replace(`${BASE_URL}/${resp.data}`);
 });
 
-$(".delete-user-button").on("click", async function (evt) {
+$deleteUserButton.on("click", async function (evt) {
 	evt.preventDefault();
 	console.debug("DeleteUserButton: onClick");
 	const target = $(evt.target);
@@ -81,7 +81,7 @@ $(".delete-user-button").on("click", async function (evt) {
 	window.location.replace(`${BASE_URL}/${resp.data}`);
 });
 
-$(".edit-task-button").on("click", async function (evt) {
+$editTaskButton.on("click", async function (evt) {
 	evt.preventDefault();
 	console.debug("EditTaskButton: onSubmit");
 
@@ -109,7 +109,7 @@ $(".edit-task-button").on("click", async function (evt) {
 	window.location.replace(`${BASE_URL}/${resp.data}`);
 });
 
-$(".delete-task-button").on("click", async function (evt) {
+$deleteTaskButton.on("click", async function (evt) {
 	evt.preventDefault();
 	console.debug("DeleteTaskButton: onClick");
 	const target = $(evt.target);
@@ -134,7 +134,7 @@ $("input[type=checkbox]").change(async function (evt) {
 	}
 });
 
-$(".edit-user-assignment-button").on("click", async function (evt) {
+$editUserAssignmentButton.on("click", async function (evt) {
 	evt.preventDefault();
 	console.debug("EditUserAssignmentButton: onSubmit");
 
@@ -156,7 +156,7 @@ $(".edit-user-assignment-button").on("click", async function (evt) {
 	window.location.replace(`${BASE_URL}/${resp.data}`);
 });
 
-$(".edit-task-assignment-button").on("click", async function (evt) {
+$editTaskAssigmentButton.on("click", async function (evt) {
 	evt.preventDefault();
 	console.debug("EditUserAssignmentButton: onSubmit");
 
@@ -178,7 +178,7 @@ $(".edit-task-assignment-button").on("click", async function (evt) {
 	window.location.replace(`${BASE_URL}/${resp.data}`);
 });
 
-$(".delete-assignment-button").on("click", async function (evt) {
+$deleteAssignmentButton.on("click", async function (evt) {
 	evt.preventDefault();
 	console.debug("DeleteAssignmentButton: onClick");
 	const target = $(evt.target);
@@ -190,32 +190,14 @@ $(".delete-assignment-button").on("click", async function (evt) {
 	location.reload();
 });
 
-$(".completion-status-button").on("click", async function (evt) {
-	console.debug("completion status button");
+$completionStatusButton.on("click", async function (evt) {
+	console.debug("completionStatusButton");
 	const target = $(evt.target);
-	const admin_id = target.data("admin-id");
 	const task_id = target.data("task-id");
+	const assignee_id = target.data("assignee-id");
 
-	const resp = await axios.post(`${BASE_URL}/notify/${task_id}/${admin_id}`);
-	console.log(resp);
-});
+	const resp1 = await axios.post(`${BASE_URL}/tasks/${task_id}/completed`);
+	const resp2 = await axios.post(`${BASE_URL}/notify/${task_id}/${assignee_id}`);
 
-$(".completed-tasks-button").on("click", async function (evt) {
-	console.debug("Show Completed Tasks: 'click'");
-	const user_id = $(".completed-tasks-button").data("user-id");
-	const resp = await axios.get(`${BASE_URL}/tasks/${user_id}/completed`);
-	completed_tasks = resp.data;
-	if (completed_tasks.lenth === 0) return;
-	for (let i = 0; i < completed_tasks.length; i++) {
-		console.log("completed task: ", completed_tasks[i]);
-		html = htmlGenerator(completed_tasks[i], "completed-task");
-
-		// const respHtml = await axios.post(`${BASE_URL}/templates`, {
-		// 	headers: { "Content-Type": "application/json" },
-		// 	data: { html: html }
-		// });
-		// console.log(respHtml);
-		$("#completed-tasks-list").append(html);
-		$("#completed-tasks-container").removeClass("d-none");
-	}
+	location.replace(`${BASE_URL}/tasks`);
 });

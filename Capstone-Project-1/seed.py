@@ -17,9 +17,9 @@ jacob = User.register("123456", {"first_name":"Jacob", 'last_name':"Eiferman", "
 db.session.add_all([john, emily, frank, jacob])
 db.session.commit()
 
-task1 = Task(resp_type="personal", title="Check Inventory", description="perform weekly inventory count", due_time=datetime(2022, 8, 15), created_by=1)
-task2 = Task(resp_type="personal", title="Make Budget", due_time=datetime(2022, 8, 15), created_by=1)
-task3 = Task(resp_type="personal", title="Reconcile Bank Statements", due_time=datetime(2022, 8, 15), created_by=1)
+task1 = Task(resp_type="personal", title="Check Inventory", description="perform weekly inventory count", due_time=datetime(2022, 12, 14), created_by=1)
+task2 = Task(resp_type="personal", title="Make Budget", due_time=datetime(2022, 12, 16), created_by=1)
+task3 = Task(resp_type="personal", title="Reconcile Bank Statements", due_time=datetime(2022, 12, 15), created_by=1)
 
 db.session.add_all([task1, task2, task3])
 db.session.commit()

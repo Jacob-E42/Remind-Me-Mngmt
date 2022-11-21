@@ -10,7 +10,9 @@
 				<div class="card-title">
 					<h4>
 						<span class="badge text-bg-dark fw-bold">
-							<a href="{{url_for('show_task', id=task.id)}}" class="badge text-bg-dark fw-bold">{{task.title}}</a>
+							<a href="{{url_for('show_task', id=task.id)}}" class="badge text-bg-dark fw-bold">
+								{{task.title}} {{task.id}}
+							</a>
 						</span>
 						<span class="badge bg-secondary fw-semibold">{{task.due_time}}</span>
 						<span class="m-3 fw-semibold">{%if task.is_completed%}Completed{%else%}Incomplete{%endif%}</span>
@@ -25,13 +27,14 @@
 					<div class="row">
 						<div class="col">
 							<button
-								formaction="{{url_for('edit_completed_status', id=task.id)}}"
-								formmethod="post"
-								class="btn btn-primary">
+								data-task-id="{{task.id}}"
+								data-assignee-id="{{current_user.id}}"
+								class="btn btn-primary completion-status-button">
 								Mark complete
 							</button>
+
 							<button class="btn btn-info" formaction="{{url_for('assign_user_to_task', id=task.id)}}" formmethod="get">
-								Reassign
+								Assign User
 							</button>
 							<button
 								class="btn btn-warning"

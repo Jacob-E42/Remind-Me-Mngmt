@@ -75,8 +75,12 @@ def edit_user_assignment(user_id, task_id):
 def show_assign_task_form(id):
     form = AssignTaskForm()
     task = Task.query.get(id)
-    form.assignee_id.choices = [(u.id, u.first_name + " " + u.last_name) for u in User.query.all()]
-    session["assigned_user_ids"] = [user.id for user in task.users]
+
+    unassigned_users = User.query.filter(User.id.not_in([user.id for user in task.users])).all()
+    if len(unassigned_users) == 0:
+        flash("All users have already been assigned to this task", "secondary")
+        return redirect(url_for('show_all_tasks'))
+    form.assignee_id.choices = [(u.id, u.first_name + " " + u.last_name) for u in unassigned_users]
     session["user_choices"] = form.assignee_id.choices
     return render_template("assignments/create_task_assignment.html", form=form, task=task)
 
@@ -92,17 +96,16 @@ def assign_user_to_task(id):
         form_data = {k: v for k, v in form.data.items() if k != "csrf_token" and k != "assignee_id"}
         data = {"assigner_id": current_user.id, "task_id": id, **form_data}
         assignee = form.assignee_id.data
-
-        if (assignee not in assigned_user_ids) or len(assigned_user_ids) == 0:
-            new_assignment = Assignment(assignee_id=assignee, **data)
-            db.session.add(new_assignment)
-            db.session.commit()
-            flash("Assignment Created!", "success")
+        new_assignment = Assignment(assignee_id=assignee, **data)
+        db.session.add(new_assignment)
+        db.session.commit()
+        flash("Assignment Created!", "success")
         return redirect(url_for('show_all_tasks'))
+        
     for field in form:
         for error in field.errors:
             flash(error, "danger")
-    return redirect(url_for('show_assign_user_form', id=id))
+    return redirect(url_for('show_assign_task_form', id=id))
     
 
 @app.route("/assignments/tasks/<int:task_id>/<int:user_id>", methods=["GET"])

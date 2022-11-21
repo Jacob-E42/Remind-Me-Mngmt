@@ -13,8 +13,9 @@ from flask_login import current_user
 @app.route("/tasks", methods=["GET"])
 @admin_required
 def show_all_tasks():
-    tasks = Task.query.order_by(Task.id).all()
-    assignments = Assignment.query.all()
+    tasks = Task.query.order_by(Task.due_time).all()
+    task_ids = [task.id for task in tasks]
+    assignments = [assignment for assignment in Assignment.query.all() if assignment.task_id in task_ids]
     return render_template("tasks/all_tasks.html", tasks=tasks, assignments=assignments)
 
 @app.route("/tasks/create", methods=["GET"])
@@ -96,8 +97,8 @@ def edit_completed_status(id):
     task.is_completed = not task.is_completed
     db.session.add(task)
     db.session.commit()
-    flash("Status changed", "success")
-    return redirect(url_for('show_all_tasks'))
+    flash("Completion status changed", "success")
+    return task.serialize()
 
 
 @app.route("/tasks/<int:user_id>/completed", methods=["GET"])
