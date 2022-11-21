@@ -19,7 +19,7 @@ def show_all_tasks():
     return render_template("tasks/all_tasks.html", tasks=tasks, assignments=assignments)
 
 @app.route("/tasks/create", methods=["GET"])
-@login_required
+@admin_required
 def show_create_task_form():
     form = CreateTaskForm()
     return render_template("tasks/create_task.html", form=form)

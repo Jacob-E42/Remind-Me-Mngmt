@@ -18,9 +18,8 @@ def send_daily_reminder():
         body = generate_body(user, "daily")
         if not body:
             continue
-        print("******************************",body)
         reminder = send_sms(user.phone, body)
-        flash("You sent daily reminders!", "success")
+    flash("You sent daily reminders!", "success")
     return redirect(url_for('show_all_users'))
 
 
@@ -80,10 +79,10 @@ def send_sms(recipient, msg):
 
 def generate_body(user, type, task=None, assignee=None):
     if type == "user":
-        msg = f"Hi {user.first_name} {user.last_name}, here are your upcoming tasks:\n"
+        msg = f"Hi {user.first_name} {user.last_name}, here are your upcoming tasks:"
         user_tasks = user.tasks
         for task in user_tasks:
-            string = f"The task {task.title} is due by {task.due_time}\n"
+            string = f"\nThe task {task.title} is due by {task.due_time}.\n"
             msg += string
         return msg
     elif type == "task":
@@ -96,13 +95,13 @@ def generate_body(user, type, task=None, assignee=None):
         return msg
     elif type == "daily":
         users_assignments = [assignment for assignment in user.assignments if assignment.remind_daily and is_due_today(assignment.task)]
-        print("***************", users_assignments, user.assignments, len(users_assignments))
+        
         if len(users_assignments) == 0:
              return None
         msg = f"Hi {user.first_name} {user.last_name}, here are your upcoming tasks for today:\n"
         
         for assignment in users_assignments:
-            string = f"The task {assignment.task.title} is due by {assignment.task.due_time}\n"
+            string = f"\nThe task {assignment.task.title} is due by {assignment.task.due_time}.\n"
             msg += string
         return msg
     else:
