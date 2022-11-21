@@ -4,21 +4,44 @@ let currentUser;
 
 function checkForLoggedInUser() {
 	console.debug("chedkForLoggedInUser");
-	let loggedIn = JSON.parse($currentUserIsLoggedIn);
-	if (loggedIn) {
+	let loggedIn = $currentUserIsLoggedIn;
+	if (loggedIn === "False") {
+		return false;
+	} else {
 		currentUser = $currentUserFirstAndLastName;
 		return true;
-	} else return false;
+	}
 }
 
 function showAdminUI() {
-	return "hi";
+	console.debug("showAdminUI");
+	showRegularUserComponents();
+	showAdminComponents();
 }
 
 function showRegularUserUI() {
-	return "hi";
+	console.debug("showRegularUserUI");
+	showRegularUserComponents();
 }
 
 function showAnonymousUserUI() {
-	return "hi";
+	console.debug("showAnonymousUserUI");
+}
+
+function showRegularUserComponents() {
+	console.debug("ShowRegularUserComponents");
+	const components = [nav, $navUsers, $navTasks, $navLogout, $navMyProfile];
+	components.forEach((c) => c.show());
+}
+
+function showAdminComponents() {
+	console.debug("ShowAdminComponents");
+	const components = [$navCreateTask];
+	components.forEach((c) => c.show());
+}
+
+function showAnonymousUserComponents() {
+	console.debug("ShowAnonymousUserComponents");
+	const components = [];
+	components.forEach((c) => c.show());
 }
