@@ -6,7 +6,6 @@ const $currentUserId = $("#current-user").data("user-id");
 const $currentUserFirstAndLastName = $("#current-user").data("user-name");
 const $currentUserIsAdmin = $("#current-user").data("is-admin");
 const $currentUserIsLoggedIn = $("#current-user").data("is-authenticated");
-
 const $navbar = $("nav");
 const $navUsers = $("#navUsers");
 const $navTasks = $("#navTasks");
@@ -20,6 +19,7 @@ const $createUserButton = $(".create-user-button");
 const $editUserButton = $(".edit-user-button");
 const $editUserForm = $("#edit-user-form");
 const $deleteUserButton = $(".delete-user-button");
+const $createTaskButton = $(".create-task-button");
 const $editTaskButton = $(".edit-task-button");
 const $deleteTaskButton = $(".delete-task-button");
 const $completionStatusButton = $(".completion-status-button");
@@ -106,8 +106,33 @@ $editTaskButton.on("click", async function (evt) {
 
 	const resp = await axios.patch(`${BASE_URL}/tasks/${task_id}`, task);
 
-	window.location.replace(`${BASE_URL}/${resp.data}`);
+	window.location.replace(`${BASE_URL}${resp.data}`);
 });
+
+// $createTaskButton.on("click", async function (evt) {
+// 	evt.preventDefault();
+// 	console.debug("createTaskButton");
+
+// 	let csrf_token = $("#csrf_token").val();
+// 	let title = $("#title").val();
+// 	let description = $("#description").val();
+// 	let resp_type = $("#resp_type").val();
+// 	let due_time = $("#due_time").val();
+// 	let is_completed = $("#is_completed").val();
+
+// 	let task = {
+// 		csrf_token: csrf_token,
+// 		title: title,
+// 		description: description,
+// 		resp_type: resp_type,
+// 		due_time: due_time,
+// 		is_completed: is_completed
+// 	};
+
+// 	const resp = await axios.post(`${BASE_URL}/tasks`, task);
+
+// 	window.location.replace(`${BASE_URL}${resp.data}`);
+// });
 
 $deleteTaskButton.on("click", async function (evt) {
 	evt.preventDefault();

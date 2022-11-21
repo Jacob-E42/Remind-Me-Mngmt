@@ -1,6 +1,6 @@
 {% extends 'index.html' %} {%block content%}
 <p class="text-center display-3">All Users</p>
-<form class="d-center" action="{{url_for('create_user')}}" method="post">
+<form class="d-center" action="{{url_for('show_create_user_form')}}" method="get">
 	<button class="btn btn-secondary create-user-button">Create User</button>
 	<button class="btn btn-info daily-reminder-button" type="submit" formaction="{{url_for('send_daily_reminder')}}">
 		Daily Reminder

@@ -27,7 +27,9 @@ def show_create_task_form():
 @app.route("/tasks", methods=["POST"])
 @admin_required
 def create_task():
+    print(request.data, request.form)
     form = CreateTaskForm(obj=request.data)
+    print(form.due_time.data)
     if form.validate_on_submit():
         data = {k: v for k, v in form.data.items() if k != "csrf_token"}
         new_task = Task(created_by=current_user.id, **data)
@@ -35,10 +37,11 @@ def create_task():
         db.session.commit()
         flash("New Task Created!", "success")
         return redirect(url_for('show_all_tasks'))
+
     for field in form:
         for error in field.errors:
             flash(error, "danger")
-    return redirect(url_for('show_create_task_form'), code=303)
+    return redirect(url_for('show_create_task_form'))
     
 
 @app.route("/tasks/<int:id>", methods=["GET"])
