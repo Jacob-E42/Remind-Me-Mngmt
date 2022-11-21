@@ -15,7 +15,12 @@
 				<div class="card-body">
 					<a href="{{ url_for('show_user', id=user.id) }}" class="show-user-link text-decoration-none">
 						<h5 class="card-title text-dark text-decoration-none">{{user.first_name}} {{user.last_name}}</h5>
-
+						<p class="text-end text-decoration-none">
+							<span class="fst-normal fw-normal text-reset text-decoration-none">Assigned To:</span>
+							{%for task in user.tasks%}
+							<a href="/tasks/{{task.id}}" class=""><p class="text-end">{{task.title}}</p></a>
+							{%endfor%}
+						</p>
 						<a href="{{url_for('assign_task_to_user', id=user.id)}}" class="btn btn-primary submit assign-task-button">
 							Assign New Task
 						</a>

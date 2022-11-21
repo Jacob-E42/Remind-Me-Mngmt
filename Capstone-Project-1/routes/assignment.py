@@ -11,9 +11,12 @@ from flask_login import login_required, current_user
 def show_assign_user_form(id):
     user = User.query.get_or_404(id)
     form = AssignUserForm(obj=user)
-    assigned_task_ids = [task.id for task in user.tasks]
-    form.task_id.choices = [(task.id, task.title) for task in Task.query.all()]
-    session["assigned_task_ids"] = assigned_task_ids
+    unassigned_tasks = Task.query.filter(Task.id.not_in([task.id for task in user.tasks])).all()
+    print(unassigned_tasks,"******" , user.tasks,"******")
+    if len(unassigned_tasks) == 0:
+        flash("All tasks have already been assigned to this user", "secondary")
+        return redirect(url_for('show_all_users'))
+    form.task_id.choices = [(task.id, task.title) for task in unassigned_tasks]
     session["choices"] = form.task_id.choices
     return render_template("assignments/create_user_assignment.html", form=form, user=user)
 
@@ -21,7 +24,6 @@ def show_assign_user_form(id):
 @admin_required
 def assign_task_to_user(id):
     form = AssignUserForm(obj=request.data)
-    assigned_task_ids = session["assigned_task_ids"]
     form.task_id.choices = session["choices"]
 
     if form.validate_on_submit():
@@ -29,14 +31,11 @@ def assign_task_to_user(id):
                      "csrf_token" and k != "task_id"}
         data = {"assigner_id": current_user.id, "assignee_id": id, **form_data}
         task = form.task_id.data
-
-        
-        if (task not in assigned_task_ids) or len(assigned_task_ids) == 0:
-            new_assignment = Assignment(task_id=task, **data)
-            db.session.add(new_assignment)
-            db.session.commit()
-            flash("Assignment Created!", "success")
-            return redirect(url_for('show_user', id=id))
+        new_assignment = Assignment(task_id=task, **data)
+        db.session.add(new_assignment)
+        db.session.commit()
+        flash("Assignment Created!", "success")
+        return redirect(url_for('show_user', id=id))
         
     for field in form:
         for error in field.errors:
@@ -88,8 +87,6 @@ def show_assign_task_form(id):
 @admin_required
 def assign_user_to_task(id):
     form = AssignTaskForm(obj=request.data)
-    task = Task.query.get(id)
-    assigned_user_ids = session["assigned_user_ids"]
     form.assignee_id.choices = session["user_choices"]
 
     if form.validate_on_submit():
@@ -101,7 +98,7 @@ def assign_user_to_task(id):
         db.session.commit()
         flash("Assignment Created!", "success")
         return redirect(url_for('show_all_tasks'))
-        
+
     for field in form:
         for error in field.errors:
             flash(error, "danger")
