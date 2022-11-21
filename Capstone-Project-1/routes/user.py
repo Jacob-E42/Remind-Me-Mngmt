@@ -26,7 +26,7 @@ def show_user(id):
         return redirect('login')
     user = User.query.get_or_404(id)
     assignments = user.assignments
-    return render_template("users/user_details.html", user=user, assignments=assignments)
+    return render_template("users/user_details.html", user=user, assignments=assignments, current_user=current_user)
 
 #deprecated
 # @app.route("/users/my_tasks", methods=["GET"])

@@ -6,7 +6,6 @@ from flask import Flask, request, redirect, render_template, session, flash, url
 from flask_login import LoginManager, current_user, login_required, login_user, logout_user, UserMixin
 from functools import wraps
 from datetime import timedelta
-from urllib.parse import urlparse, urljoin
 
 
 

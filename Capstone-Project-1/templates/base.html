@@ -16,6 +16,13 @@
 	</head>
 
 	<body>
+		<span
+			class="d-none"
+			id="current-user"
+			data-user-name="{{current_user.first_name}} {{current_user.last_name}}"
+			data-user-id="{{current_user.id}}"
+			data-is-admin="{{current_user.is_admin}}"
+			data-is-authenticated="{{current_user.is_authenticated}}"></span>
 		{%for cat, msg in get_flashed_messages(with_categories=True)%}
 		<p class="alert alert-{{cat}} text-center">{{msg}}</p>
 		{%endfor%} {% block nav %} {% endblock %}
@@ -34,6 +41,7 @@
 			src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.min.js"
 			integrity="sha384-ODmDIVzN+pFdexxHEHFBQH3/9/vQ9uori45z4JjnFsRydbmQbmL5t1tQ0culUzyK"
 			crossorigin="anonymous"></script>
-		<script src="/static/main.js"></script>
+		<script src="/static/js/main.js"></script>
+		<script src="/static/js/user.js"></script>
 	</body>
 </html>

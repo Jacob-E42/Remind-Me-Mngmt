@@ -1,13 +1,45 @@
-const BASE_URL = "http://localhost:5000";
-const $editUserForm = $("#edit-user-form");
+"use strict";
 
-// async function deleteUser(user_id) {
-// 	console.debug("deleteUser");
-// 	const resp = await axios.delete(`${BASE_URL}/users/${user_id}`);
-// 	const msg = resp.data.delete;
-//     console.log(msg)
-// 	return msg;
-// }
+const BASE_URL = "http://localhost:5000";
+const $body = $("body");
+const $currentUserId = $("#current-user").data("user-id");
+const $currentUserFirstAndLastName = $("#current-user").data("user-name");
+const $currentUserIsAdmin = $("#current-user").data("is-admin");
+const $currentUserIsLoggedIn = $("#current-user").data("is-authenticated");
+const $editUserForm = $("#edit-user-form");
+const $navbar = $(".navbar-nav");
+const $navUsers = $("#navUsers");
+const $navTasks = $("#navTasks");
+const $navCreateTask = $("#navCreateTask");
+const $navLogin = $("#navLogin");
+const $navSignup = $("#navSignup");
+const $navLogout = $("#navLogout");
+const $navMyProfile = $("#navMyProfile");
+const $editUserButton = $(".edit-user-button");
+const $deleteUserButton = $(".delete-user-button");
+const $editTaskButton = $(".edit-task-button");
+const $deleteTaskButton = $(".delete-task-button");
+const $editUserAssignmentButton = $(".edit-user-assignment-button");
+const $editTaskAssigmentButton = $(".edit-task-assignment-button");
+const $deleteAssignmentButton = $(".delete-assignment-button");
+const $completionStatusButton = $(".completion-status-button");
+
+function hidePageComponents() {
+	console.debug("hidePageComponents");
+	const components = [];
+	components.forEach((c) => c.hide());
+}
+
+async function start() {
+	console.debug("start");
+	console.log($currentUserIsAdmin)
+	hidePageComponents();
+	isLoggedIn = checkForLoggedInUser();
+	if (isLoggedIn && $currentUserIsAdmin) showAdminUI()
+	else if (isLoggedIn %% !$currentUserIsAdmin) showRegularUserUI()
+	else showAnonymousUserUI()
+
+$(start);
 
 $(".edit-user-button").on("click", async function (evt) {
 	evt.preventDefault();
@@ -183,34 +215,6 @@ $(".completed-tasks-button").on("click", async function (evt) {
 		// console.log(respHtml);
 		$("#completed-tasks-list").append(html);
 		$("#completed-tasks-container").removeClass("d-none");
-	}
-});
-
-$("#incomplete-tasks-button").on("click", async function (evt) {
-	console.debug("Show Incomplete Tasks: 'click'");
-	const user_id = $("#incomplete-tasks-button").data("user-id");
-	const resp = await axios.get(`${BASE_URL}/tasks/${user_id}/incomplete`);
-	incomplete_tasks = resp.data;
-	if (incomplete_tasks.lenth === 0) return;
-	for (let i = 0; i < incomplete_tasks.length; i++) {
-		console.log("incompleted task: ", incomplete_tasks[i]);
-		html = htmlGenerator(incomplete_tasks[i], "incomplete-task");
-		$("#incomplete-tasks-list").append(html);
-		$("#incomplete-tasks-container").removeClass("d-none");
-	}
-});
-
-$("#upcoming-tasks-button").on("click", async function (evt) {
-	console.debug("Show Upcoming Tasks: 'click'");
-	const user_id = $("#upcoming-tasks-button").data("user-id");
-	const resp = await axios.get(`${BASE_URL}/tasks/${user_id}/upcoming`);
-	upcoming_tasks = resp.data;
-	if (upcoming_tasks.lenth === 0) return;
-	for (let i = 0; i < upcoming_tasks.length; i++) {
-		console.log("completed task: ", upcoming_tasks[i]);
-		html = htmlGenerator(upcoming_tasks[i], "upcoming-task");
-		$("#upcoming-tasks-list").append(html);
-		$("#upcoming-tasks-container").removeClass("d-none");
 	}
 });
 

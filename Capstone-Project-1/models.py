@@ -32,7 +32,7 @@ class User(db.Model, UserMixin):
 
     def __repr__(self):
         
-        return f" {self.id} {self.first_name} {self.last_name} "
+        return f"{self.first_name} {self.last_name} - {self.id}"
     
     def get_id(self):
         if self.is_authenticated:

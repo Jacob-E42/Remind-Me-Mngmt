@@ -5,6 +5,7 @@ from secret import ACCOUNT_SID, TEST_AUTH_TOKEN, AUTH_TOKEN, SERVICE_SID
 from flask import Flask, request, redirect, render_template, session, flash, url_for, abort
 from flask_login import current_user
 from twilio.rest import Client
+from urllib.parse import urlparse, urljoin
 from datetime import datetime
 
 
@@ -19,12 +20,6 @@ def admin_required(func):
 
     return validate_is_admin
 
-@app.route("/templates", methods=["GET", "POST"])
-@admin_required
-def generate_flask_html_template():
-    html = request.data
-    print(html, request.form["data"], request.files, request.json["data"])
-    return render_template(html)
 
 def is_safe_url(target):
     ref_url = urlparse(request.host_url)
