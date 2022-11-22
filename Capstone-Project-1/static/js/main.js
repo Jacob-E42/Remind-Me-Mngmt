@@ -16,6 +16,7 @@ const $navLogout = $("#navLogout");
 const $navMyProfile = $("#navMyProfile");
 const $showUserLink = $(".show-user-link");
 const $createUserButton = $(".create-user-button");
+const $usernameErrorSpan = $(".username-error");
 const $editUserButton = $(".edit-user-button");
 const $editUserForm = $("#edit-user-form");
 const $deleteUserButton = $(".delete-user-button");
@@ -45,7 +46,7 @@ $(start);
 
 $editUserButton.on("click", async function (evt) {
 	evt.preventDefault();
-	console.debug("EditUserButton: onSubmit");
+	console.debug("editUserButton");
 
 	const target = $(evt.target);
 	const user_id = target.data("user-id");
@@ -65,10 +66,13 @@ $editUserButton.on("click", async function (evt) {
 		email: email,
 		phone: phone
 	};
-
-	const resp = await axios.patch(`${BASE_URL}/users/${user_id}`, user);
-
-	window.location.replace(`${BASE_URL}/${resp.data}`);
+	if (!(await usernameIsUnique(username))) {
+		await axios.post(`${BASE_URL}/flash`, { "msg": "That username is already taken." });
+		window.location.reload();
+	} else {
+		const resp = await axios.patch(`${BASE_URL}/users/${user_id}`, user);
+		window.location.replace(`${BASE_URL}${resp.data}`);
+	}
 });
 
 $deleteUserButton.on("click", async function (evt) {

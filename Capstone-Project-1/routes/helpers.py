@@ -67,6 +67,10 @@ def is_due_today(task):
     now = datetime.now()
     return due_time.date() == now.date()
 
+@app.route("/flash", methods=["POST"])
+def flash_incoming_message():
+    flash(request.json["msg"], "danger")
+    return ""
 
 
 

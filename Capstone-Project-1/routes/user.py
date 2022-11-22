@@ -71,16 +71,17 @@ def edit_user(id):
     user = User.query.get_or_404(id)
     form = EditUserForm(obj=request.data)
     form.is_submitted()
+    print(request.data, "\n", request.form, "\n", form.data)
     if form.validate():
-        
+      
         data = {k: v for k, v in form.data.items() if k != "csrf_token"}
         for (k, v) in data.items():
             setattr(user, k, v)
         db.session.add(user)
         db.session.commit()
         flash("User updated!", "success")
-        return url_for('show_user_details', id=id)
-    
+        return url_for('show_user', id=id)
+
     for field in form:
         for error in field.errors:
             flash(error, "danger")
@@ -96,6 +97,10 @@ def delete_user(id):
     flash("User deleted!", "danger")
     return url_for('show_all_users')
 
+@app.route("/users/usernames", methods=["GET"])
+def get_all_usernames():
+    usernames = [user.username for user in User.query.all()]
+    return jsonify(usernames)
 
 @app.route("/users/change", methods=["POST", "GET"])
 def change_admin_status():
