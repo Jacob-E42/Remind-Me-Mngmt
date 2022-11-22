@@ -39,5 +39,10 @@ db.create_all()
 
 @app.route('/')
 def show_homepage():
-  
-    return render_template("home.html")
+    if (current_user.is_authenticated):
+        if (current_user.is_admin):
+             return render_template("/homepages/admin_user_home.html")
+        else:
+            return render_template("/homepages/regular_user_home.html")
+    return render_template("/homepages/anon_user_home.html")
+   

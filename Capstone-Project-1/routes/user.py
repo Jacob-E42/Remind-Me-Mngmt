@@ -28,14 +28,6 @@ def show_user(id):
     assignments = user.assignments
     return render_template("users/user_details.html", user=user, assignments=assignments, current_user=current_user)
 
-#deprecated
-# @app.route("/users/my_tasks", methods=["GET"])
-# @login_required
-# def show_all_user_tasks():
-#     user = User.query.get(current_user.id)
-#     tasks = user.tasks
-
-#     return render_template("users/all_user_tasks.html", user=user, tasks=tasks)
 @app.route("/users/create", methods=["GET"])
 @admin_required
 def show_create_user_form():
@@ -71,7 +63,6 @@ def edit_user(id):
     user = User.query.get_or_404(id)
     form = EditUserForm(obj=request.data)
     form.is_submitted()
-    print(request.data, "\n", request.form, "\n", form.data)
     if form.validate():
       
         data = {k: v for k, v in form.data.items() if k != "csrf_token"}
