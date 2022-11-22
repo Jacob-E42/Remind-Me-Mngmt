@@ -1,78 +1,54 @@
 "use strict";
 
-let currentUser;
+$createUserButton.on("click", async function (evt) {
+	console.debug("createUserButton");
 
-function hideLoggedInUserComponents() {
-	console.debug("hidePageComponents");
-	const components = [
-		$navbar,
-		$navUsers,
-		$navTasks,
-		$navCreateTask,
-		$navLogin,
-		$navSignup,
-		$navLogout,
-		$navMyProfile,
-		$createUserButton,
-		$dailyReminderButton,
-		$editUserButton,
-		$assignTaskButton,
-		$remindUserButton,
-		$deleteUserButton,
-		$showUserLink
-	];
-	components.forEach((c) => c.hide());
-}
+	let username = $("#username").val();
 
-function checkForLoggedInUser() {
-	console.debug("chedkForLoggedInUser");
-	let loggedIn = $currentUserIsLoggedIn;
-	if (loggedIn === "False") {
-		return false;
-	} else {
-		currentUser = $currentUserFirstAndLastName;
-		return true;
+	if (!(await usernameIsUnique(username))) {
+		await axios.post(`${BASE_URL}/flash`, { "msg": "That username is already taken." });
+		window.location.reload();
 	}
-}
+});
 
-function showAdminUI() {
-	console.debug("showAdminUI");
-	showRegularUserComponents();
-	showAdminComponents();
-}
+$editUserButton.on("click", async function (evt) {
+	evt.preventDefault();
+	console.debug("editUserButton");
 
-function showRegularUserUI() {
-	console.debug("showRegularUserUI");
-	showRegularUserComponents();
-}
+	const target = $(evt.target);
+	const user_id = target.data("user-id");
+	const prev_username = target.data("username");
 
-function showAnonymousUserUI() {
-	console.debug("showAnonymousUserUI");
-}
+	let csrf_token = $("#csrf_token").val();
+	let first_name = $("#first_name").val();
+	let last_name = $("#last_name").val();
+	let username = $("#username").val();
+	let email = $("#email").val();
+	let phone = $("#phone").val();
 
-function showAdminComponents() {
-	console.debug("ShowAdminComponents");
-	const components = [
-		$navCreateTask,
-		$createUserButton,
-		$dailyReminderButton,
-		$editUserButton,
-		$assignTaskButton,
-		$remindUserButton,
-		$deleteUserButton,
-		$showUserLink
-	];
-	components.forEach((c) => c.show());
-}
+	let user = {
+		csrf_token: csrf_token,
+		first_name: first_name,
+		last_name: last_name,
+		username: username,
+		email: email,
+		phone: phone
+	};
+	if (!(await usernameIsUnique(username, prev_username))) {
+		await axios.post(`${BASE_URL}/flash`, { "msg": "That username is already taken." });
+		window.location.reload();
+	} else {
+		const resp = await axios.patch(`${BASE_URL}/users/${user_id}`, user);
+		window.location.replace(`${BASE_URL}${resp.data}`);
+	}
+});
 
-function showRegularUserComponents() {
-	console.debug("ShowRegularUserComponents");
-	const components = [$navbar, $navUsers, $navTasks, $navLogout, $navMyProfile];
-	components.forEach((c) => c.show());
-}
+$deleteUserButton.on("click", async function (evt) {
+	evt.preventDefault();
+	console.debug("DeleteUserButton: onClick");
+	const target = $(evt.target);
+	const user_id = target.data("user-id");
 
-function showAnonymousUserComponents() {
-	console.debug("ShowAnonymousUserComponents");
-	const components = [];
-	components.forEach((c) => c.show());
-}
+	const resp = await axios.delete(`${BASE_URL}/users/${user_id}`);
+	window.location.replace(`${BASE_URL}/${resp.data}`);
+});
