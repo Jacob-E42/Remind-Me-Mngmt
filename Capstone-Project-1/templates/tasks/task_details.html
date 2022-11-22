@@ -3,10 +3,10 @@
 	<div class="card">
 		<div class="card-body">
 			<h5 class="card-title">
-				<a href="#" class="text-dark text-decoration-none">
+				<span class="text-dark">
 					{{task.title}} - {{task.id}} - {%if task.is_completed%}Completed{%else%}Incomplete{%endif%} - Due By:
-					{{task.due_time}}
-				</a>
+				</span>
+				<span class="due-time" data-due-time="{{task.due_time}}" hidden>{{task.due_time}}</span>
 			</h5>
 			<p class="card-text">Description: {{task.description}}</p>
 			<p class="card-text">Responsibility Type: {{task.resp_type}}</p>

@@ -20,6 +20,7 @@ const $usernameErrorSpan = $(".username-error");
 const $editUserButton = $(".edit-user-button");
 const $editUserForm = $("#edit-user-form");
 const $deleteUserButton = $(".delete-user-button");
+const $dueTime = $(".due-time");
 const $createTaskButton = $(".create-task-button");
 const $editTaskButton = $(".edit-task-button");
 const $deleteTaskButton = $(".delete-task-button");
