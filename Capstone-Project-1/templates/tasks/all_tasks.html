@@ -2,9 +2,7 @@
 <h1 class="display-2 text-center">All Tasks</h1>
 <form class="d-center" action="{{url_for('show_create_task_form')}}" method="get">
 	<button class="btn btn-success">Create Task</button>
-	<button class="btn btn-info daily-reminder-button" type="submit" formaction="{{url_for('send_daily_reminder')}}">
-		Daily Reminder
-	</button>
+	<button class="btn btn-info daily-reminder-button" type="submit" formaction="{{url_for('send_daily_reminder')}}"> Daily Reminder </button>
 </form>
 <div class="container">
 	<ul>
@@ -15,11 +13,9 @@
 				<div class="card-title">
 					<h4>
 						<span class="badge text-bg-dark fw-bold">
-							<a href="{{url_for('show_task', id=task.id)}}" class="badge text-bg-dark fw-bold">
-								{{task.title}} {{task.id}}
-							</a>
+							<a href="{{url_for('show_task', id=task.id)}}" class="badge text-bg-dark fw-bold"> {{task.title}} {{task.id}} </a>
 						</span>
-						<span class="badge bg-secondary fw-semibold due-time" hidden data-due-time="{{task.due_time}}"></span>
+						<span class="badge bg-secondary fw-semibold due-time" data-duetime="{{task.due_time}}"></span>
 						<span class="m-3 fw-semibold">{%if task.is_completed%}Completed{%else%}Incomplete{%endif%}</span>
 					</h4>
 				</div>
@@ -41,20 +37,14 @@
 							<button class="btn btn-info" formaction="{{url_for('assign_user_to_task', id=task.id)}}" formmethod="get">
 								Assign User
 							</button>
-							<button
-								class="btn btn-warning"
-								formaction="{{url_for('remind_for_task', task_id=task.id)}}"
-								formmethod="post">
+							<button class="btn btn-warning" formaction="{{url_for('remind_for_task', task_id=task.id)}}" formmethod="post">
 								Remind
 							</button>
 						</div>
 					</div>
 					<div class="row">
 						<div class="col">
-							<button
-								formaction="{{url_for('show_edit_task_form', id=task.id)}}"
-								formmethod="get"
-								class="btn btn-success">
+							<button formaction="{{url_for('show_edit_task_form', id=task.id)}}" formmethod="get" class="btn btn-success">
 								Edit
 							</button>
 							<button
@@ -78,11 +68,7 @@
 									<div class="modal-content">
 										<div class="modal-header">
 											<h1 class="modal-title fs-5" id="staticBackdropLabel">Delete</h1>
-											<button
-												type="button"
-												class="btn-close"
-												data-bs-dismiss="modal"
-												aria-label="Close"></button>
+											<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 										</div>
 										<div class="modal-body">Are you sure you want to delete this?</div>
 										<div class="modal-footer">
