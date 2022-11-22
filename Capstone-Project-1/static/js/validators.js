@@ -1,9 +1,13 @@
-async function usernameIsUnique(username) {
+async function usernameIsUnique(username, prev_username = null) {
 	console.debug("usernameIsUnique");
+
 	const resp = await axios.get(`${BASE_URL}/users/usernames`);
-	if (username in resp.data) {
-		return false;
-	} else {
-		return true;
+
+	for (let name of resp.data) {
+		if (username === name) {
+			if (username === prev_username) return true;
+			return false;
+		}
 	}
+	return true;
 }

@@ -44,12 +44,24 @@ async function start() {
 
 $(start);
 
+$createUserButton.on("click", async function (evt) {
+	console.debug("createUserButton");
+
+	let username = $("#username").val();
+
+	if (!(await usernameIsUnique(username))) {
+		await axios.post(`${BASE_URL}/flash`, { "msg": "That username is already taken." });
+		window.location.reload();
+	}
+});
+
 $editUserButton.on("click", async function (evt) {
 	evt.preventDefault();
 	console.debug("editUserButton");
 
 	const target = $(evt.target);
 	const user_id = target.data("user-id");
+	const prev_username = target.data("username");
 
 	let csrf_token = $("#csrf_token").val();
 	let first_name = $("#first_name").val();
@@ -66,7 +78,7 @@ $editUserButton.on("click", async function (evt) {
 		email: email,
 		phone: phone
 	};
-	if (!(await usernameIsUnique(username))) {
+	if (!(await usernameIsUnique(username, prev_username))) {
 		await axios.post(`${BASE_URL}/flash`, { "msg": "That username is already taken." });
 		window.location.reload();
 	} else {

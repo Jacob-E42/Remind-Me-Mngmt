@@ -1,7 +1,7 @@
 {% extends 'index.html' %} {%block content%}
 <p class="text-center display-3">All Users</p>
 <form class="d-center" action="{{url_for('show_create_user_form')}}" method="get">
-	<button class="btn btn-secondary create-user-button">Create User</button>
+	<button class="btn btn-secondary">Create User</button>
 	<button class="btn btn-info daily-reminder-button" type="submit" formaction="{{url_for('send_daily_reminder')}}">
 		Daily Reminder
 	</button>
@@ -24,7 +24,7 @@
 						<a href="{{url_for('assign_task_to_user', id=user.id)}}" class="btn btn-primary submit assign-task-button">
 							Assign New Task
 						</a>
-						<a href="{{url_for('show_edit_user_form', id=user.id)}}" class="btn btn-secondary edit-user-button">Edit</a>
+						<a href="{{url_for('show_edit_user_form', id=user.id)}}" class="btn btn-secondary">Edit</a>
 						<form action="#" method="post" class="d-inline-block">
 							<button
 								formaction="{{url_for('remind_user', user_id=user.id)}}"

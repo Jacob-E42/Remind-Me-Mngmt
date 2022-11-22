@@ -8,15 +8,11 @@
 
 		{% for field in form if field.widget.input_type != 'hidden' %}
 
-		<p>
-			{{ field.label }} {{ field }} {% for error in field.errors %} {%if field.label == "username"%}
-			<span class="display:hidden username-error"></span>
-			{%endif%} {% endfor %}
-		</p>
+		<p>{{ field.label }} {{ field }} {% for error in field.errors %}{% endfor %}</p>
 
 		{% endfor %}
 
-		<button class="btn btn-primary edit-user-button" data-user-id="{{user.id}}">Submit</button>
+		<button class="btn btn-primary edit-user-button" data-user-id="{{user.id}}" data-username="{{user.username}}">Submit</button>
 		<a class="btn btn-info" href="/">Back</a>
 	</form>
 </div>
