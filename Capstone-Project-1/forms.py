@@ -37,7 +37,7 @@ class EditUserForm(FlaskForm):
   phone = StringField("Phone Number", validators=[DataRequired(message="Phone number is required"), Length(min=10, max=12, message="Phone number should be entered as plain digits with no other characters")])
     
 class ChangePasswordForm(FlaskForm):
-  old_password = PasswordField("Old password", validators=[DataRequired(message="Old password is required"), Length(min=6, max=50, message="Password length must be between 6 and 50 characters")])
+  previous_password = PasswordField("Previous password", validators=[DataRequired(message="Old password is required"), Length(min=6, max=50, message="Password length must be between 6 and 50 characters")])
   first_password = PasswordField("New password", validators=[DataRequired(message="Password is required"), Length(min=6, max=50, message="Password length must be between 6 and 50 characters")])
   second_password = PasswordField("Confirm New password", validators=[DataRequired(message="Password is required"), EqualTo('first_password', message="The two passwords don't match."), Length(min=6, max=50, message="Password length must be between 6 and 50 characters")])
 

@@ -109,11 +109,14 @@ def change_password(id):
     print(request.data)
     user = User.query.get_or_404(id)
     if form.validate_on_submit():
-        user.change_password(form.password.data)
-        db.session.add(user)
-        db.session.commit()
-        flash("Password Updated!", "success")
-        return redirect(url_for("show_user", id=id))
+        if user.authenticate_password(form.previous_password.data):
+            user.change_password(form.second_password.data)
+            db.session.add(user)
+            db.session.commit()
+            flash("Password Updated!", "success")
+            return redirect(url_for("show_user", id=id))
+        else:
+            flash("Previous password provided is incorrect.", "danger")
 
     for field in form:
         for error in field.errors:

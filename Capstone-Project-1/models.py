@@ -78,11 +78,19 @@ class User(db.Model, UserMixin):
         u = cls.query.filter_by(username=username).first()
         if not u:
             return (False, "That is not a valid username")
-        if bcrypt.check_password_hash(u.password, pwd):
+        if authenticate_password(pwd):
             # return user instance
             return (u, "Logged in successfully.")
         else:
             return (False, "The password provided is incorrect")
+
+    def authenticate_password(self, pwd):
+        if bcrypt.check_password_hash(self.password, pwd):
+            # return user instance
+            return True
+        else:
+            return False
+
     
 class Task(db.Model):
 
