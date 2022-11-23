@@ -72,6 +72,15 @@ def flash_incoming_message():
     flash(request.json["msg"], "danger")
     return ""
 
+def user_has_no_associated_tasks(user):
+    user_created_tasks = Task.query.filter_by(created_by=user.id).all()
+    print(user_created_tasks)
+    if len(user_created_tasks) > 0:
+        print("userhasnoassociatedtasks: " )
+        flash("There are tasks that are still associated with this user. Delete those tasks first to delete this user.", "danger")
+        return False
+    return True
+
 
 
 

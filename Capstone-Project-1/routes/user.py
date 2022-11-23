@@ -1,11 +1,11 @@
 from app import app
 from routes.login import admin_required, load_user
 from routes.reminder import remind_user
+from routes.helpers import user_has_no_associated_tasks
 from models import db, User, Task, Assignment
-from forms import  EditUserForm, AssignUserForm, CreateUserForm, AssignTaskForm
+from forms import  EditUserForm, AssignUserForm, CreateUserForm, AssignTaskForm, ChangePasswordForm
 from flask import Flask, request, redirect, render_template, session, flash, url_for, abort, jsonify
 from flask_login import login_required, current_user
-
 
 
 
@@ -20,7 +20,7 @@ def show_all_users():
 
 
 @app.route("/users/<int:id>", methods=["GET"])
-@admin_required
+@login_required
 def show_user(id):
     if id == 0:
         return redirect('login')
@@ -83,15 +83,50 @@ def edit_user(id):
 @admin_required
 def delete_user(id):
     user = User.query.get_or_404(id)
+    if not user_has_no_associated_tasks(user): 
+        return jsonify({"error": "delete failed"})
     db.session.delete(user)
     db.session.commit()
     flash("User deleted!", "danger")
-    return url_for('show_all_users')
+    return jsonify(user.serialize())
 
 @app.route("/users/usernames", methods=["GET"])
 def get_all_usernames():
     usernames = [user.username for user in User.query.all()]
     return jsonify(usernames)
+
+@app.route("/users/<int:id>/password", methods=["GET"])
+@login_required
+def get_password_form(id):
+    form = ChangePasswordForm()
+    user = User.query.get_or_404(id)
+    return render_template("/users/change_password_form.html", user=user, form=form)
+
+@app.route("/users/<int:id>/password", methods=["POST"])
+@login_required
+def change_password(id):
+    form = ChangePasswordForm(obj=request.data)
+    print(request.data)
+    user = User.query.get_or_404(id)
+    if form.validate_on_submit():
+        user.change_password(form.password.data)
+        db.session.add(user)
+        db.session.commit()
+        flash("Password Updated!", "success")
+        return redirect(url_for("show_user", id=id))
+
+    for field in form:
+        for error in field.errors:
+            flash(error, "danger")
+            print(error)
+    return redirect(url_for('get_password_form', id=id))
+
+@app.route("/users/<int:id>/tasks", methods=["GET"])
+@login_required
+def get_all_my_tasks(id):
+    user = User.query.get_or_404(id)
+    serialized_tasks = [task.serialize() for task in user.tasks]
+    return jsonify(serialized_tasks)
 
 @app.route("/users/change", methods=["POST", "GET"])
 def change_admin_status():

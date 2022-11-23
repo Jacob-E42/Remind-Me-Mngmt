@@ -12,7 +12,6 @@ def show_assign_user_form(id):
     user = User.query.get_or_404(id)
     form = AssignUserForm(obj=user)
     unassigned_tasks = Task.query.filter(Task.id.not_in([task.id for task in user.tasks])).all()
-    print(unassigned_tasks,"******" , user.tasks,"******")
     if len(unassigned_tasks) == 0:
         flash("All tasks have already been assigned to this user", "secondary")
         return redirect(url_for('show_all_users'))

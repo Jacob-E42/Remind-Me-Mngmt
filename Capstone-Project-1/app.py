@@ -35,14 +35,13 @@ connect_db(app)
 db.create_all()
 
 
-
-
 @app.route('/')
 def show_homepage():
+    
     if (current_user.is_authenticated):
         if (current_user.is_admin):
-             return render_template("/homepages/admin_user_home.html")
+             return render_template("/homepages/admin_user_home.html", user=current_user)
         else:
-            return render_template("/homepages/regular_user_home.html")
+            return render_template("/homepages/regular_user_home.html", user=current_user)
     return render_template("/homepages/anon_user_home.html")
    

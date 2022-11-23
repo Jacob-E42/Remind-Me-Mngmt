@@ -3,7 +3,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql import func
 from flask_bcrypt import Bcrypt
-from flask_login import UserMixin
+from flask_login import UserMixin, AnonymousUserMixin
 from sqlalchemy.orm import backref
 
 bcrypt = Bcrypt()
@@ -30,20 +30,13 @@ class User(db.Model, UserMixin):
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     is_admin = db.Column(db.Boolean, nullable=False, default=False)
 
+    assignments = db.relationship("Assignment", back_populates="user", cascade="all, delete-orphan")
+    tasks = db.relationship("Task", viewonly=True, secondary="assignments", back_populates="users")
+
     def __repr__(self):
         
         return f"{self.first_name} {self.last_name} - {self.id}"
-    
-    def get_id(self):
-        if self.is_authenticated:
-            try:
-                return str(self.id)
-            except AttributeError:
-                raise NotImplementedError("No `id` attribute - override `get_id`") from None
-        else:
-            print("look at model class")
-            return 0
-
+   
     def change_admin(self):
         self.is_admin = not self.is_admin
 
@@ -58,6 +51,12 @@ class User(db.Model, UserMixin):
         "phone": self.phone,
         "created_at": self.created_at,
         "is_admin": self.is_admin}
+    
+    def change_password(self, pwd):
+        hashed = bcrypt.generate_password_hash(pwd, rounds=14)
+        # turn bytestring into normal (unicode utf8) string
+        hashed_utf8 = hashed.decode("utf8")
+        self.password = hashed_utf8
 
     @classmethod
     def register(cls, pwd, data):
@@ -95,12 +94,12 @@ class Task(db.Model):
     title = db.Column(db.String(180), nullable=False)
     description = db.Column(db.Text)
     due_time  = db.Column(db.DateTime, nullable=False)
-    created_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False )
+    created_by = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="SET NULL") )
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     time_completed = db.Column(db.DateTime, server_onupdate=db.func.now())
 
-    assignments = db.relationship("Assignment", backref="task", cascade="all, delete-orphan")
-    users = db.relationship("User", viewonly=True, secondary="assignments", backref="tasks")
+    assignments = db.relationship("Assignment", back_populates="task", cascade="all, delete-orphan")
+    users = db.relationship("User", viewonly=True, secondary="assignments", back_populates="tasks")
 
     def __repr__(self):
         return f" {self.id} {self.title} {self.due_time} {self.is_completed}"
@@ -124,13 +123,15 @@ class Assignment(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     assigner_id = db.Column(db.Integer, nullable=False)
-    assignee_id = db.Column(db.Integer,  db.ForeignKey("users.id"), nullable=False)
-    task_id = db.Column(db.Integer, db.ForeignKey("tasks.id"),  nullable=False)
+    assignee_id = db.Column(db.Integer,  db.ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    task_id = db.Column(db.Integer, db.ForeignKey("tasks.id", ondelete="CASCADE"),  nullable=False)
     remind_daily = db.Column(db.Boolean,  default=False)
     notify_admin = db.Column(db.Boolean,  default=False)
 
-    # task = db.relationship("Task", back_populates="assignments")
-    user = db.relationship("User", backref="assignments")
+ 
+    task = db.relationship("Task", back_populates="assignments")
+    user = db.relationship("User", back_populates="assignments")
+    
     def __repr__(self):
         return f" User: {self.assignee_id} Task: {self.task_id} {self.remind_daily} {self.notify_admin} "
     
@@ -142,3 +143,4 @@ class Assignment(db.Model):
         "task_id": self.task_id,
         "remind_daily": self.remind_daily,
         "notify_admin": self.notify_admin}
+

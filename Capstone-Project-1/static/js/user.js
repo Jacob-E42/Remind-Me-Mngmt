@@ -6,7 +6,7 @@ $createUserButton.on("click", async function (evt) {
 	let username = $("#username").val();
 
 	if (!(await usernameIsUnique(username))) {
-		await axios.post(`${BASE_URL}/flash`, { "msg": "That username is already taken." });
+		await axios.post(`${BASE_URL}/flash`, {"msg": "That username is already taken."});
 		window.location.reload();
 	}
 });
@@ -35,7 +35,7 @@ $editUserButton.on("click", async function (evt) {
 		phone: phone
 	};
 	if (!(await usernameIsUnique(username, prev_username))) {
-		await axios.post(`${BASE_URL}/flash`, { "msg": "That username is already taken." });
+		await axios.post(`${BASE_URL}/flash`, {"msg": "That username is already taken."});
 		window.location.reload();
 	} else {
 		const resp = await axios.patch(`${BASE_URL}/users/${user_id}`, user);
@@ -45,10 +45,11 @@ $editUserButton.on("click", async function (evt) {
 
 $deleteUserButton.on("click", async function (evt) {
 	evt.preventDefault();
-	console.debug("DeleteUserButton: onClick");
+	console.debug("deleteUserButton");
 	const target = $(evt.target);
 	const user_id = target.data("user-id");
 
 	const resp = await axios.delete(`${BASE_URL}/users/${user_id}`);
-	window.location.replace(`${BASE_URL}/${resp.data}`);
+	console.log(resp.data);
+	window.location.replace(`${BASE_URL}/users`);
 });

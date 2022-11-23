@@ -11,9 +11,7 @@
 			<form action="#" method="post" class="d-inline-block">
 				<button formaction="{{url_for('remind_user', user_id=user.id)}}" class="btn btn-warning">Remind</button>
 			</form>
-			<button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#staticBackdrop{{user.id}}">
-				Delete
-			</button>
+			<button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#staticBackdrop{{user.id}}"> Delete </button>
 
 			<!-- Modal -->
 			<div
@@ -38,6 +36,9 @@
 					</div>
 				</div>
 			</div>
+			<button class="btn btn-secondary"
+				><a href="{{url_for('get_password_form', id=user.id)}}" class="text-light text-decoration-none">Change Password</a></button
+			>
 		</div>
 	</div>
 </div>
@@ -77,9 +78,7 @@
 							<button class="btn btn-info" formaction="{{url_for('assign_user_to_task', id=task.id)}}" formmethod="get">
 								Reassign
 							</button>
-							<button class="btn btn-warning" formaction="{{url_for('remind_for_task', task_id=task.id)}}">
-								Remind
-							</button>
+							<button class="btn btn-warning" formaction="{{url_for('remind_for_task', task_id=task.id)}}"> Remind </button>
 							<button
 								type="button"
 								class="btn btn-danger"
@@ -101,11 +100,7 @@
 									<div class="modal-content">
 										<div class="modal-header">
 											<h1 class="modal-title fs-5" id="staticBackdropLabel">Delete</h1>
-											<button
-												type="button"
-												class="btn-close"
-												data-bs-dismiss="modal"
-												aria-label="Close"></button>
+											<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 										</div>
 										<div class="modal-body">Are you sure you want to delete this?</div>
 										<div class="modal-footer">

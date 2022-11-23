@@ -3,10 +3,30 @@
 
 <div class="container">
 	<div class="row">
-		<div class="col-12">
-			<a href="{{url_for('login')}}" class="m-3 btn btn-primary">Login</a>
-			<a href="{{url_for('signup')}}" class="btn btn-primary">Sign Up</a>
+		<div class="col-6"
+			><div class="card-body">
+				<h5 class="card-title">
+					<a href="#" class="text-dark text-decoration-none">{{user.first_name}} {{user.last_name}}</a>
+				</h5>
+				<p class="card-text">Username: {{user.username}} {% if user.is_admin %} - Admin {%endif%}</p>
+				<a class="btn btn-primary" href="{{url_for('assign_task_to_user', id=user.id)}}">Assign New Task</a>
+
+				<form action="#" method="post" class="d-inline-block">
+					<button formaction="{{url_for('remind_user', user_id=user.id)}}" class="btn btn-warning">Remind</button>
+				</form>
+			</div>
 		</div>
+		<div class="col-6">
+			<div class="card-body">
+				<h5 class="card-title">My Tasks</h5>
+				<section>
+					<ul class="my-tasks"> </ul>
+				</section>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-12"> </div>
 	</div>
 </div>
 
