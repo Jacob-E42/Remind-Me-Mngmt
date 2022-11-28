@@ -3,8 +3,8 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql import func
 from flask_bcrypt import Bcrypt
-from flask_login import UserMixin, AnonymousUserMixin
-from sqlalchemy.orm import backref
+from flask_login import UserMixin
+
 
 bcrypt = Bcrypt()
 
@@ -43,7 +43,7 @@ class User(db.Model, UserMixin):
     def serialize(self):
 
         return {"id": self.id,
-        "first_name ": self.first_name,
+        "first_name": self.first_name,
         "last_name": self.last_name,
         "username": self.username,
         "password": self.password,
@@ -57,6 +57,13 @@ class User(db.Model, UserMixin):
         # turn bytestring into normal (unicode utf8) string
         hashed_utf8 = hashed.decode("utf8")
         self.password = hashed_utf8
+
+    def authenticate_password(self, pwd):
+        if bcrypt.check_password_hash(self.password, pwd):
+            # return user instance
+            return True
+        else:
+            return False
 
     @classmethod
     def register(cls, pwd, data):
@@ -78,18 +85,12 @@ class User(db.Model, UserMixin):
         u = cls.query.filter_by(username=username).first()
         if not u:
             return (False, "That is not a valid username")
-        if authenticate_password(pwd):
+        if u.authenticate_password(pwd):
             # return user instance
             return (u, "Logged in successfully.")
         else:
             return (False, "The password provided is incorrect")
 
-    def authenticate_password(self, pwd):
-        if bcrypt.check_password_hash(self.password, pwd):
-            # return user instance
-            return True
-        else:
-            return False
 
     
 class Task(db.Model):
