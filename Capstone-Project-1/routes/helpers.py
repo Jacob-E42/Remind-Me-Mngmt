@@ -9,6 +9,7 @@ from urllib.parse import urlparse, urljoin
 from datetime import datetime
 
 
+
 def admin_required(func):
     @wraps(func)
     def validate_is_admin(*args, **kwargs):
@@ -27,15 +28,18 @@ def is_safe_url(target):
     return test_url.scheme in ('http', 'https') and \
         ref_url.netloc == test_url.netloc
 
+
 def get_assignment(user_id, task_id):
     if user_id and task_id:
         return Assignment.query.filter_by(assignee_id=user_id, task_id=task_id).first()
     return None
 
+
 def get_user_assignments(user_id):
     if user_id:
         return Assignment.query.filter_by(assignee_id=user_id).all()
     return None
+
 
 def get_users_completed_tasks(user_id):
     if user_id:
@@ -43,14 +47,17 @@ def get_users_completed_tasks(user_id):
         return [assignment.task for assignment in users_assignments if assignment.task.is_completed]
     return None
 
+
 def get_users_incomplete_tasks(user_id):
     if user_id:
         users_assignments = get_user_assignments(user_id)
         return [assignment.task for assignment in users_assignments if assignment.task.is_completed is False]
     return None
 
+
 def get_current_time():
     return datetime.now()
+
 
 def is_past_due(task):
     due_time = task.due_time
@@ -59,48 +66,30 @@ def is_past_due(task):
         return True
     elif due_time > now:
         return False
-    else: 
+    else:
         return False
+
 
 def is_due_today(task):
     due_time = task.due_time
     now = datetime.now()
     return due_time.date() == now.date()
 
+
 @app.route("/flash", methods=["POST"])
 def flash_incoming_message():
     flash(request.json["msg"], "danger")
     return ""
 
+
 def user_has_no_associated_tasks(user):
     user_created_tasks = Task.query.filter_by(created_by=user.id).all()
     print(user_created_tasks)
     if len(user_created_tasks) > 0:
-        print("userhasnoassociatedtasks: " )
+        print("userhasnoassociatedtasks: ")
         flash("There are tasks that are still associated with this user. Delete those tasks first to delete this user.", "danger")
         return False
     return True
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 # @app.route("/bind")
@@ -151,7 +140,7 @@ def user_has_no_associated_tasks(user):
 #             message = u'this element already exists'
 #         self.message = message
 
-#     def __call__(self, form, field):         
+#     def __call__(self, form, field):
 #         check = self.model.query.filter(self.field == field.data).first()
 #         print("**********************************************check: ", check)
 #         if check:
