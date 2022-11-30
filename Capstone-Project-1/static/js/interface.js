@@ -19,7 +19,19 @@ async function hideLoggedInUserComponents() {
 		$assignTaskButton,
 		$remindUserButton,
 		$deleteUserButton,
-		$showUserLink
+		$showUserLink,
+		$editUserButton,
+		$deleteUserPrompt,
+		$editUserAssignmentButton,
+		$reassignButton,
+		$deleteAssignmentPrompt,
+		$remindDailyText,
+		$notifyAdminText,
+		$deleteTaskPrompt,
+		$assignUserButton,
+		$editTaskButton,
+		$editTaskAssigmentButton,
+		$remindTaskButton
 	];
 	components.forEach((c) => c.hide());
 }
@@ -53,6 +65,7 @@ function showAnonymousUserUI() {
 function showAdminComponents() {
 	console.debug("ShowAdminComponents");
 	const components = [
+		$body,
 		$navCreateTask,
 		$createUserButton,
 		$dailyReminderButton,
@@ -60,14 +73,26 @@ function showAdminComponents() {
 		$assignTaskButton,
 		$remindUserButton,
 		$deleteUserButton,
-		$showUserLink
+		$showUserLink,
+		$editUserButton,
+		$deleteUserPrompt,
+		$editUserAssignmentButton,
+		$reassignButton,
+		$deleteAssignmentPrompt,
+		$remindDailyText,
+		$notifyAdminText,
+		$deleteTaskPrompt,
+		$assignUserButton,
+		$editTaskButton,
+		$editTaskAssigmentButton,
+		$remindTaskButton
 	];
 	components.forEach((c) => c.show());
 }
 
 function showRegularUserComponents() {
 	console.debug("ShowRegularUserComponents");
-	const components = [$navbar, $navUsers, $navTasks, $navLogout, $navMyProfile];
+	const components = [$body, $navbar, $navUsers, $navLogout, $navMyProfile, $showUserLink];
 	components.forEach((c) => c.show());
 }
 

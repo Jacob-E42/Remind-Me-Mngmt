@@ -6,12 +6,14 @@
 				<a href="#" class="text-dark text-decoration-none">{{user.first_name}} {{user.last_name}}</a>
 			</h5>
 			<p class="card-text">{{user.username}} {{user.phone}} {{user.email}} {% if user.is_admin %} - Admin {%endif%}</p>
-			<a class="btn btn-primary" href="{{url_for('assign_task_to_user', id=user.id)}}">Assign New Task</a>
+			<a class="btn btn-primary assign-task-button" href="{{url_for('assign_task_to_user', id=user.id)}}">Assign New Task</a>
 			<a href="{{url_for('show_edit_user_form', id=user.id)}}" class="btn btn-secondary">Edit</a>
 			<form action="#" method="post" class="d-inline-block">
-				<button formaction="{{url_for('remind_user', user_id=user.id)}}" class="btn btn-warning">Remind</button>
+				<button formaction="{{url_for('remind_user', user_id=user.id)}}" class="btn btn-warning remind-user-button">Remind</button>
 			</form>
-			<button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#staticBackdrop{{user.id}}"> Delete </button>
+			<button type="button" class="btn btn-danger delete-user-prompt" data-bs-toggle="modal" data-bs-target="#staticBackdrop{{user.id}}">
+				Delete
+			</button>
 
 			<!-- Modal -->
 			<div
@@ -53,10 +55,10 @@
 						<span class="badge text-bg-dark fw-bold">
 							<a href="{{url_for('show_task', id=task.id)}}" class="">{{task.title}}</a>
 						</span>
-						<span class="badge bg-secondary fw-semibold">{{task.due_time}}</span>
+						<span class="badge bg-secondary fw-semibold">Due: {{task.due_time}}</span>
 						<span class="m-3 fw-semibold">{%if task.is_completed%}Completed{%else%}Incomplete{%endif%}</span>
-						<span class="badge text-dark">Remind Daily: {{assignment.remind_daily}}</span>
-						<span class="badge text-dark">Notify Admin: {{assignment.notify_admin}}</span>
+						<span class="badge text-dark remind-daily-text">Remind Daily: {{assignment.remind_daily}}</span>
+						<span class="badge text-dark notify-admin-text">Notify Admin: {{assignment.notify_admin}}</span>
 					</h4>
 				</div>
 				<form class="card-text" action="#" method="post">
@@ -70,18 +72,25 @@
 								Mark complete
 							</button>
 							<button
-								class="btn btn-secondary"
+								class="btn btn-secondary edit-user-assignment-form"
 								formaction="{{url_for('show_edit_user_assignment', user_id=user.id, task_id=task.id)}}"
-								formmethod="get">
+								formmethod="get"
+								data-user-id="{{user.id}}"
+								data-task-id="{{task.id}}">
 								Edit Assignment
 							</button>
-							<button class="btn btn-info" formaction="{{url_for('assign_user_to_task', id=task.id)}}" formmethod="get">
+							<button
+								class="btn btn-info reassign-button"
+								formaction="{{url_for('assign_user_to_task', id=task.id)}}"
+								formmethod="get">
 								Reassign
 							</button>
-							<button class="btn btn-warning" formaction="{{url_for('remind_for_task', task_id=task.id)}}"> Remind </button>
+							<button class="btn btn-warning remind-user-button" formaction="{{url_for('remind_for_task', task_id=task.id)}}">
+								Remind
+							</button>
 							<button
 								type="button"
-								class="btn btn-danger"
+								class="btn btn-danger delete-assignment-prompt"
 								data-bs-toggle="modal"
 								data-bs-target="#staticBackdrop{{user.id}}{{task.id}}">
 								Delete Assignment

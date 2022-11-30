@@ -1,3 +1,11 @@
-#change-form{
-    display: inline;
+#change-form {
+	display: inline;
+}
+
+/* div.container {
+	visibility: hidden;
+} */
+
+body {
+	display: none;
 }

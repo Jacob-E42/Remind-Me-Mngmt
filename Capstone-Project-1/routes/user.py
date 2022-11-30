@@ -51,7 +51,7 @@ def create_user():
         return redirect(url_for('show_create_user_form'), code=303)
     
 @app.route("/users/<int:id>/update", methods=["GET"])
-@admin_required
+@login_required
 def show_edit_user_form(id):
     user = load_user(id)
     form = EditUserForm(obj=user)

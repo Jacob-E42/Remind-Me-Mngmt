@@ -6,12 +6,12 @@ $createUserButton.on("click", async function (evt) {
 	let username = $("#username").val();
 
 	if (!(await usernameIsUnique(username))) {
-		await axios.post(`${BASE_URL}/flash`, {"msg": "That username is already taken."});
+		await axios.post(`${BASE_URL}/flash`, { "msg": "That username is already taken." });
 		window.location.reload();
 	}
 });
 
-$editUserButton.on("click", async function (evt) {
+$patchUserButton.on("click", async function (evt) {
 	evt.preventDefault();
 	console.debug("editUserButton");
 
@@ -35,7 +35,7 @@ $editUserButton.on("click", async function (evt) {
 		phone: phone
 	};
 	if (!(await usernameIsUnique(username, prev_username))) {
-		await axios.post(`${BASE_URL}/flash`, {"msg": "That username is already taken."});
+		await axios.post(`${BASE_URL}/flash`, { "msg": "That username is already taken." });
 		window.location.reload();
 	} else {
 		const resp = await axios.patch(`${BASE_URL}/users/${user_id}`, user);

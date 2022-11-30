@@ -7,7 +7,7 @@ from flask import Flask, request, redirect, render_template, session, flash, url
 from flask_login import login_required, current_user
 
 @app.route("/assignments/users/<int:id>", methods=["GET"])
-@login_required
+@admin_required
 def show_assign_user_form(id):
     user = User.query.get_or_404(id)
     form = AssignUserForm(obj=user)
@@ -43,6 +43,7 @@ def assign_task_to_user(id):
 
 
 @app.route("/assignments/users/<int:user_id>/<int:task_id>", methods=["GET"])
+@admin_required
 def show_edit_user_assignment(user_id, task_id):
     user = User.query.get_or_404(user_id)
     task = Task.query.get_or_404(task_id)
