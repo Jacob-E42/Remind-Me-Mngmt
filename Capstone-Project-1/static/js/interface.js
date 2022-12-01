@@ -31,7 +31,9 @@ async function hideLoggedInUserComponents() {
 		$assignUserButton,
 		$editTaskButton,
 		$editTaskAssigmentButton,
-		$remindTaskButton
+		$remindTaskButton,
+		$editUserAssignmentFormButton,
+		$editTaskAssignmentFormButton
 	];
 	components.forEach((c) => c.hide());
 }
@@ -85,7 +87,9 @@ function showAdminComponents() {
 		$assignUserButton,
 		$editTaskButton,
 		$editTaskAssigmentButton,
-		$remindTaskButton
+		$remindTaskButton,
+		$editUserAssignmentFormButton,
+		$editTaskAssignmentFormButton
 	];
 	components.forEach((c) => c.show());
 }

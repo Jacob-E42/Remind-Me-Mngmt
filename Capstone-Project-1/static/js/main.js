@@ -38,6 +38,7 @@ const $deleteAssignmentButton = $(".delete-assignment-button");
 const $reassignButton = $(".reassign-button");
 const $deleteAssignmentPrompt = $(".delete-assignment-prompt");
 const $editUserAssignmentFormButton = $(".edit-user-assignment-form");
+const $editTaskAssignmentFormButton = $(".edit-task-assignment-form");
 const $remindDailyText = $(".remind-daily-text");
 const $notifyAdminText = $(".notify-admin-text");
 const $dailyReminderButton = $(".daily-reminder-button");
