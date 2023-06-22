@@ -95,7 +95,6 @@ def generate_body(user, type, task=None, assignee=None):
         return msg
     elif type == "daily":
         users_assignments = [assignment for assignment in user.assignments if assignment.remind_daily and is_due_today(assignment.task)]
-        
         if len(users_assignments) == 0:
              return None
         msg = f"Hi {user.first_name} {user.last_name}, here are your upcoming tasks for today:\n"

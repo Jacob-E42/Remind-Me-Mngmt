@@ -21,6 +21,15 @@ def admin_required(func):
 
     return validate_is_admin
 
+def admin_or_own(func):
+    @wraps(func)
+    def validate_is_admin_or_own(*args, **kwargs):
+        if not (current_user.is_authenticatd and (current_user.is_admin or current_user.id == id )):
+            flash("You do not have access to this!", "danger")
+            
+        return func(*args, **kwargs)
+    return validate_is_admin_or_own
+
 
 def is_safe_url(target):
     ref_url = urlparse(request.host_url)

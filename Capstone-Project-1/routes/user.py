@@ -1,7 +1,7 @@
 from app import app
 from routes.login import admin_required, load_user
 from routes.reminder import remind_user
-from routes.helpers import user_has_no_associated_tasks
+from routes.helpers import user_has_no_associated_tasks, admin_or_own
 from models import db, User, Task, Assignment
 from forms import  EditUserForm, AssignUserForm, CreateUserForm, AssignTaskForm, ChangePasswordForm
 from flask import Flask, request, redirect, render_template, session, flash, url_for, abort, jsonify
@@ -20,7 +20,7 @@ def show_all_users():
 
 
 @app.route("/users/<int:id>", methods=["GET"])
-@login_required
+@admin_or_own
 def show_user(id):
     if id == 0:
         return redirect('login')

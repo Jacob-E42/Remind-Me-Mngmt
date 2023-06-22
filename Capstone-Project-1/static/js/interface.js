@@ -69,6 +69,7 @@ function showAdminComponents() {
 	const components = [
 		$body,
 		$navCreateTask,
+		$navTasks,
 		$createUserButton,
 		$dailyReminderButton,
 		$editUserButton,

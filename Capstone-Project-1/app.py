@@ -27,6 +27,8 @@ app.config['SECRET_KEY'] = SECRET_KEY
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 app.config['DEBUG'] = True
 
+app.debug = True
+
 debug = DebugToolbarExtension(app)
 
 # connects db and creates all tables on the db server
